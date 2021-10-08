@@ -1,1 +1,10 @@
 /.vscode
+/back/ply
+/back/entrada.txt
+/back/analizadores/__pycache__
+/back/analizadores/parser.out
+/back/analizadores/parsetab.py
+/back/clases/abstract/__pycache__
+/back/clases/instrucciones/__pycache__
+/back/clases/enviroment/__pycache__
+/back/clases/expresiones/__pycache__
