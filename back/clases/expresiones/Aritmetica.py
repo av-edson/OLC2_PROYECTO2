@@ -1,4 +1,5 @@
 from enum import Enum
+import re
 from clases.abstract.Expresion import *
 from clases.abstract.Return import *
 from clases.enviroment.Generator import Generator
@@ -27,21 +28,59 @@ class OperacionAritmetica(Expresion):
             res = Return()
 
             if(self.tipo==OperacionesAritmeticas.SUMA):
-                res = self.suma(izq,der)
+                res = self.sumaRestaMult(izq,der)
                 if res == None: return Return()
                 ope="+"
             elif (self.tipo==OperacionesAritmeticas.RESTA):
+                res = self.sumaRestaMult(izq,der)
+                if res == None: return Return()
                 ope="-"
             elif (self.tipo==OperacionesAritmeticas.MULTI):
+                res = self.sumaRestaMult(izq,der)
+                if res == None: return Return()
                 ope="*"
             elif (self.tipo==OperacionesAritmeticas.DIV):
+                res = self.division(izq,der)
+                if res == None: return Return()
                 ope="/"
             temp = generador.addTemporal()
             generador.addExpresion(izq.valor,der.valor,ope,temp)
+            res.valor = temp
             return res
         except:
             print("error inesperado en la operacion binaria")
     
-    def suma(self,izq,der):
-        return False
+    def sumaRestaMult(self,izq,der):
+        if not(izq.tipo==Type.INT or izq.tipo==Type.FLOAT):
+            print("Tipo de Dato no admitido en operacion aritmetica")
+            return 
+        if not(der.tipo==Type.INT or der.tipo==Type.FLOAT):
+            print("Tipo de Dato no admitido en operacion aritmetica")
+            return 
+        
+        if (izq.tipo==Type.FLOAT or der.tipo==Type.FLOAT):
+            return Return(0,Type.FLOAT,True)
+        return Return(0,Type.INT,True)
+    def division(self,izq,der):
+        if not(izq.tipo==Type.INT or izq.tipo==Type.FLOAT):
+            print("Tipo de Dato no admitido en operacion aritmetica")
+            return 
+        if not(der.tipo==Type.INT or der.tipo==Type.FLOAT):
+            print("Tipo de Dato no admitido en operacion aritmetica")
+            return 
+        if int(der.valor)==0:
+            print("Division por 0 no admitida")
+            return 
+        if (izq.tipo==Type.FLOAT or der.tipo==Type.FLOAT):
+            return Return(0,Type.FLOAT,True)
+        else:
+            if izq.esTemp or der.esTemp:
+                return Return(0,Type.FLOAT,True)
+            v = izq.valor/der.valor
+            formato = re.compile(r'^\-?[1-9][0-9]*$')
+            if re.match(formato,str(v)):
+                v = int(v)
+                return Return(0,Type.INT,True)
+            else:
+                return Return(0,Type.FLOAT,True)
 

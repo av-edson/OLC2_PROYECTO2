@@ -24,6 +24,7 @@ class Imprimir(Instruccion):
                 lista.append(res)   
             if self.tipo==TipoImpresion.PRINT:
                 self.ImprimirSimple(lista)
+            else: self.ImprimirML(lista)
         except:
             print("error inesperado en el print")
         
@@ -33,7 +34,21 @@ class Imprimir(Instruccion):
         for expre in lista:
             if expre.tipo == Type.INT:
                 generador.addPrint("d",expre.valor)
-        generador.addPrint(None,None)
+            elif expre.tipo == Type.FLOAT:
+                generador.addPrint("f",expre.valor)
+            elif expre.tipo == Type.BOOL:
+                tempLbl = generador.newLabel()
+            
+                generador.putLabel(expre.trueLb)
+                generador.printTrue()
+
+                generador.addGoto(tempLbl)
+
+                generador.putLabel(expre.falseLb)
+                generador.printFalse()
+
+                generador.putLabel(tempLbl)
+        generador.addPrint("c",10)
     
     def ImprimirML(self, lista):
         genAux = Generator()
@@ -41,4 +56,6 @@ class Imprimir(Instruccion):
         for expre in lista:
             if expre.tipo == Type.INT:
                 generador.addPrint("d",expre.valor)
-                generador.addPrint(None,None)
+            elif expre.tipo == Type.FLOAT:
+                generador.addPrint("f",expre.valor)
+            generador.addPrint("c",10)

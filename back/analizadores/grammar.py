@@ -4,6 +4,7 @@ from clases.abstract.Return import Type
 from clases.expresiones.Literal import ExpresionLiteral
 from clases.expresiones.Aritmetica import OperacionAritmetica, OperacionesAritmeticas
 from clases.instrucciones.Print import *
+from clases.expresiones.Relacional import *
 
 #------------------ SINTACTICO ---------------------------
 precedence = (
@@ -57,6 +58,26 @@ def p_expresion_binaria(t):
     elif t.slice[2].type == "DIV":
         t[0] = OperacionAritmetica(t[1],t[3],OperacionesAritmeticas.DIV,t.lineno(1),t.lexpos(0))
 
+def p_expresion_relacional(t):
+    '''expresion    :   expresion MAYOR expresion
+                    |   expresion MENOR expresion
+                    |   expresion MAYOR_IGUAL expresion
+                    |   expresion MENOR_IGUAL expresion
+                    |   expresion IGUAL_IGUAL expresion
+                    |   expresion DIFERENTE expresion'''
+    if t.slice[2].type=="MAYOR":
+        t[0]=OperacionRelacional(t[1],t[3],TipoRelacional.MAYOR,t.lineno(2),t.lexpos(2))
+    elif t.slice[2].type=="MENOR":
+        t[0]=OperacionRelacional(t[1],t[3],TipoRelacional.MENOR,t.lineno(2),t.lexpos(2))
+    elif t.slice[2].type=="MAYOR_IGUAL":
+        t[0]=OperacionRelacional(t[1],t[3],TipoRelacional.MAYOR_IGUAL,t.lineno(2),t.lexpos(2))
+    elif t.slice[2].type=="MENOR_IGUAL":
+        t[0]=OperacionRelacional(t[1],t[3],TipoRelacional.MENOR_IGUAL,t.lineno(2),t.lexpos(2))
+    elif t.slice[2].type=="IGUAL_IGUAL":
+        t[0]=OperacionRelacional(t[1],t[3],TipoRelacional.IGUAL_IGUAL,t.lineno(2),t.lexpos(2))
+    else:
+        t[0]=OperacionRelacional(t[1],t[3],TipoRelacional.DIFERENTE,t.lineno(2),t.lexpos(2))
+
 def p_final_expresion(t):
     '''final_expresion  :   PARENTESIS_IZQ expresion PARENTESIS_DER
                         |   ENTERO
@@ -71,9 +92,21 @@ def p_final_expresion(t):
             t[0] = ExpresionLiteral(Type.INT,int(t[1]),t.lineno(1),t.lexpos(0))
         elif t.slice[1].type == "DECIMAL":
             t[0] = ExpresionLiteral(Type.FLOAT,float(t[1]),t.lineno(1),t.lexpos(0))
+        elif t.slice[1].type == "BOOLEANO":
+            if str(t[1])=="true":
+                t[0] = ExpresionLiteral(Type.BOOL,True,t.lineno(1),t.lexpos(0))
+            else:
+                t[0] = ExpresionLiteral(Type.BOOL,False,t.lineno(1),t.lexpos(0))
     else:
         t[0] = t[2]
 
+def p_lista_expresiones(t):
+    '''lista_expresiones    :   lista_expresiones COMA expresion'''  
+    t[1].append(t[3])
+    t[0] = t[1]
+def p_lista_expresiones_expresion(t):
+    '''lista_expresiones    :   expresion'''
+    t[0] = [t[1]]
 
 # ----------------------------- IMPRIMIR -------------------------
 def p_imprimir(t):
@@ -92,13 +125,6 @@ def p_imprimir(t):
         else:
             t[0]=Imprimir([],TipoImpresion.PRINTLN,t.lineno(1),t.lexpos(1))
 
-def p_lista_expresiones(t):
-    '''lista_expresiones    :   lista_expresiones COMA expresion'''  
-    t[1].append(t[3])
-    t[0] = t[1]
-def p_lista_expresiones_expresion(t):
-    '''lista_expresiones    :   expresion'''
-    t[0] = [t[1]]
                 
 import ply.yacc as yacc
 

@@ -74,12 +74,40 @@ class Generator:
         self.TempCont += 1
         self.temps.append(temp)
         return temp
+    # -------------------------- LABELS ---------------------------
+    def newLabel(self):
+        label = f'L{self.LabelCont}'
+        self.LabelCont+=1
+        return label
+    
+    def putLabel(self,label):
+        self.ingresarCodigo(f'{label}:\n')
+    # -------------------------- GOTO -----------------------------
+    def addGoto(self,label):
+        self.ingresarCodigo(f'goto {label};\n')
     # -------------------------- EXPRESIONES ----------------------
     def addExpresion(self,izquierdo,derecho,operacion,resultado):
         self.ingresarCodigo(f'{resultado}={izquierdo}{operacion}{derecho};\n')
     # -------------------------- INSTRUCCIONES --------------------
     def addPrint(self,tipo,valor):
-        if valor==None:
-            self.ingresarCodigo(f'fmt.Print("\\n");\n')
+        if str(tipo)=="f":
+            self.ingresarCodigo(f'fmt.Printf("%{tipo}", float64({valor}));\n')
         else:
             self.ingresarCodigo(f'fmt.Printf("%{tipo}", int({valor}));\n')
+    def printTrue(self):
+        self.addPrint("c", 116) #t
+        self.addPrint("c", 114) #r
+        self.addPrint("c", 117) #u
+        self.addPrint("c", 101) #e
+
+    def printFalse(self):
+        self.addPrint("c", 102) #f
+        self.addPrint("c", 97)  #a
+        self.addPrint("c", 108) #l
+        self.addPrint("c", 115) #s
+        self.addPrint("c", 101) #e
+    def addComent(self,comentario):
+        self.ingresarCodigo(f'/* {comentario} */\n')
+    
+    def addIf(self,izq,der,op,label):
+        self.ingresarCodigo(f'if {izq} {op} {der} {{goto {label};}}\n')
