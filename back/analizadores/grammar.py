@@ -49,7 +49,8 @@ def p_expresion_binaria(t):
     '''expresion_bin    :   expresion SUMA expresion
                             |   expresion RESTA expresion
                             |   expresion MULTI expresion
-                            |   expresion DIV expresion'''
+                            |   expresion DIV expresion
+                            |   expresion MODULO expresion'''
     if t.slice[2].type == "SUMA":
         t[0] = OperacionAritmetica(t[1],t[3],OperacionesAritmeticas.SUMA,t.lineno(1),t.lexpos(0))
     elif t.slice[2].type == "RESTA":
@@ -58,6 +59,8 @@ def p_expresion_binaria(t):
         t[0] = OperacionAritmetica(t[1],t[3],OperacionesAritmeticas.MULTI,t.lineno(1),t.lexpos(0))
     elif t.slice[2].type == "DIV":
         t[0] = OperacionAritmetica(t[1],t[3],OperacionesAritmeticas.DIV,t.lineno(1),t.lexpos(0))
+    elif t.slice[2].type == "MODULO":
+        t[0] = OperacionAritmetica(t[1],t[3],OperacionesAritmeticas.MODULO,t.lineno(1),t.lexpos(0))
 
 def p_expresion_relacional(t):
     '''expresion    :   expresion MAYOR expresion
@@ -109,6 +112,8 @@ def p_final_expresion(t):
                 t[0] = ExpresionLiteral(Type.BOOL,True,t.lineno(1),t.lexpos(0))
             else:
                 t[0] = ExpresionLiteral(Type.BOOL,False,t.lineno(1),t.lexpos(0))
+        elif t.slice[1].type == "CADENA":
+            t[0] = ExpresionLiteral(Type.STRING,str(t[1]),t.lineno(1),t.lexpos(0))
     else:
         t[0] = t[2]
 

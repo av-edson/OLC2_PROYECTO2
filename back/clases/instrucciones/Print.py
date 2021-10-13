@@ -23,12 +23,12 @@ class Imprimir(Instruccion):
                 # ver los demas tipos de datos
                 lista.append(res)   
             if self.tipo==TipoImpresion.PRINT:
-                self.ImprimirSimple(lista)
+                self.ImprimirSimple(lista,enviroment)
             else: self.ImprimirML(lista)
         except:
             print("error inesperado en el print")
         
-    def ImprimirSimple(self,lista):
+    def ImprimirSimple(self,lista,enviroment):
         genAux = Generator()
         generador = genAux.getInstance()
         for expre in lista:
@@ -48,6 +48,18 @@ class Imprimir(Instruccion):
                 generador.printFalse()
 
                 generador.putLabel(tempLbl)
+            elif expre.tipo == Type.STRING:
+                generador.funPrintString()
+                temporalParametro = generador.addTemporal()
+                generador.addExpresion('P',enviroment.size,'+',temporalParametro)
+                generador.addExpresion(temporalParametro,'1','+',temporalParametro)
+
+                generador.newEnv(enviroment.size)
+                generador.callFun('printString')
+                temp = generador.addTemporal()
+                generador.getStack(temp,'P')
+                generador.retEnv(enviroment.size)
+
         generador.addPrint("c",10)
     
     def ImprimirML(self, lista):

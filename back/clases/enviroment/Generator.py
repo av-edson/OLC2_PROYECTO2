@@ -15,7 +15,8 @@ class Generator:
         self.temps = []
 
         self.printString = False
-
+        self.diccionarioNativas={}
+        self.limpiarDirectorioNativas()
     def limpiarTodo(self):
         self.TempCont = 0
         self.LabelCont = 0
@@ -28,8 +29,14 @@ class Generator:
 
         self.temps = []
 
-        self.printString = False
         Generator.generator = Generator() 
+        self.limpiarDirectorioNativas()
+        
+    def limpiarDirectorioNativas(self):
+        self.diccionarioNativas = {}
+        self.diccionarioNativas["mathError"] = False
+        self.diccionarioNativas["printString"] = False
+        self.diccionarioNativas["mathMod"] = False
 
     # ----------------------  OBTENER STATICO -------------------
     def getInstance(self):
@@ -38,7 +45,10 @@ class Generator:
         return Generator.generator
     # ----------------------  CODIGO ----------------------------
     def getEncabezado(self):
-        head= '/*----Encabezado----*/ \n package main; \n \n import (\n\t"fmt"\n)\n\n'
+        head= '/*----Encabezado----*/ \n package main; \n \n import (\n\t"fmt"\n'
+        if self.diccionarioNativas["mathMod"]:
+            head+='\t"math"\n'
+        head+=")\n\n"
         if len(self.temps) > 0:
             head += 'var '
             for temp in range(len(self.temps)):
@@ -57,7 +67,9 @@ class Generator:
         if (self.inNativas):
             if(self.natives == ''):
                 self.natives = self.natives + '/*-----NATIVES-----*/\n'
-            self.natives = self.natives + '\t' + codigo
+                self.natives = self.natives + codigo
+            else:
+                self.natives = self.natives + '\t' + codigo
         elif(self.inFunc):
             if(self.funciones == ''):
                 self.funciones = self.ffuncionesuncs + '/*-----FUNCS-----*/\n'
@@ -118,7 +130,7 @@ class Generator:
     def addInicioFuncion(self, ide):
         if(not self.inNativas):
             self.inFunc = True
-        self.ingresarCodigo(f'func {ide}(){{\n', '')
+        self.ingresarCodigo(f'func {ide}(){{\n')
     
     def addEndFuncion(self):
         self.ingresarCodigo('return;\n}\n')
@@ -139,11 +151,20 @@ class Generator:
     
     def getStack(self, place, pos):
         self.ingresarCodigo(f'{place}=stack[int({pos})];\n')
+    #---------------------------- ENVS------------------------
+    def newEnv(self, size):
+        self.ingresarCodigo(f'P=P+{size};\n')
+
+    def callFun(self, id):
+        self.ingresarCodigo(f'{id}();\n')
+
+    def retEnv(self, size):
+        self.ingresarCodigo(f'P=P-{size};\n')
     # -------------------------- NATIVAS ---------------------------
     def funPrintString(self):
-        if(self.printString):
+        if(self.diccionarioNativas["printString"]):
             return
-        self.printString = True
+        self.diccionarioNativas["printString"] = True
         self.inNativas=True
 
         self.addInicioFuncion("printString")
@@ -176,4 +197,29 @@ class Generator:
 
         self.putLabel(returnLb)
         self.addEndFuncion()
-        self.inNatives = False
+        self.inNativas = False
+
+    def funPrintMathError(self):
+        if(self.diccionarioNativas["mathError"]):
+            return
+        self.diccionarioNativas["mathError"] = True
+        self.inNativas=True
+
+        self.addInicioFuncion("mathError")
+         # label salir funcion
+        self.addPrint('c',77)
+        self.addPrint('c',97)
+        self.addPrint('c',116)
+        self.addPrint('c',104)
+        self.addPrint('c',69)
+        self.addPrint('c',114)
+        self.addPrint('c',114)
+        self.addPrint('c',111)
+        self.addPrint('c',114)
+
+        self.addEndFuncion()
+        self.inNativas = False
+
+    def activarModulo(self,izquierdo,derecho,resultado):
+        self.diccionarioNativas["mathMod"]=True
+        self.ingresarCodigo(f'{resultado}=math.Mod({izquierdo},{derecho});\n')

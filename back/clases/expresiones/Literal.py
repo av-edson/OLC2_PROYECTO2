@@ -34,6 +34,17 @@ class ExpresionLiteral(Expresion):
                 res.trueLb = self.trueLb
                 res.falseLb = self.falseLb
                 return res
+            elif self.tipo == Type.STRING:
+                retorno = generator.addTemporal()
+                generator.addExpresion('H','','',retorno)
+                for caracter in str(self.valor):
+                    generator.setHeap('H',ord(caracter))
+                    generator.nextHeap()
+                generator.setHeap('H',-1)
+                generator.nextHeap()
+                return Return(retorno,Type.STRING,True)
+
+
             else:
                 print('falta culo')
         except:
