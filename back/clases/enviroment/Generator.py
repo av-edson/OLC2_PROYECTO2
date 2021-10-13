@@ -94,6 +94,7 @@ class Generator:
             self.ingresarCodigo(f'fmt.Printf("%{tipo}", float64({valor}));\n')
         else:
             self.ingresarCodigo(f'fmt.Printf("%{tipo}", int({valor}));\n')
+    
     def printTrue(self):
         self.addPrint("c", 116) #t
         self.addPrint("c", 114) #r
@@ -106,8 +107,73 @@ class Generator:
         self.addPrint("c", 108) #l
         self.addPrint("c", 115) #s
         self.addPrint("c", 101) #e
+    
     def addComent(self,comentario):
         self.ingresarCodigo(f'/* {comentario} */\n')
     
     def addIf(self,izq,der,op,label):
         self.ingresarCodigo(f'if {izq} {op} {der} {{goto {label};}}\n')
+
+    #----------------------- FUNCIONES -------------------------
+    def addInicioFuncion(self, ide):
+        if(not self.inNativas):
+            self.inFunc = True
+        self.ingresarCodigo(f'func {ide}(){{\n', '')
+    
+    def addEndFuncion(self):
+        self.ingresarCodigo('return;\n}\n')
+        if(not self.inNativas):
+            self.inFunc = False
+    # -------------------------- HEAP ------------------
+    def setHeap(self, pos, value):
+        self.ingresarCodigo(f'heap[int({pos})]={value};\n')
+
+    def getHeap(self, place, pos):
+        self.ingresarCodigo(f'{place}=heap[int({pos})];\n')
+
+    def nextHeap(self):
+        self.ingresarCodigo('H=H+1;\n')
+    #-------------------------- STACK--------------------------
+    def setStack(self, pos, value):
+        self.ingresarCodigo(f'stack[int({pos})]={value};\n')
+    
+    def getStack(self, place, pos):
+        self.ingresarCodigo(f'{place}=stack[int({pos})];\n')
+    # -------------------------- NATIVAS ---------------------------
+    def funPrintString(self):
+        if(self.printString):
+            return
+        self.printString = True
+        self.inNativas=True
+
+        self.addInicioFuncion("printString")
+        # label salir funcion
+        returnLb = self.newLabel()
+        # label buscar fin de cadena
+        compareLb = self.newLabel()
+        # temporal puntero stack
+        tempP = self.addTemporal()
+        # temporal heacp
+        tempH = self.addTemporal()
+
+        self.addExpresion('P',1,'+',tempP)
+        self.getStack(tempH, tempP)
+
+        # Temporal para comparar
+        tempC = self.addTemporal()
+
+        self.putLabel(compareLb)
+
+        self.getHeap(tempC, tempH)
+
+        self.addIf(tempC, '-1', '==', returnLb)
+
+        self.addPrint('c', tempC)
+
+        self.addExpresion(tempH, '1', '+',tempH)
+
+        self.addGoto(compareLb)
+
+        self.putLabel(returnLb)
+        self.addEndFuncion()
+        self.inNatives = False

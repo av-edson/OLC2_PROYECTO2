@@ -1,7 +1,7 @@
 from clases.abstract.Expresion import Expresion
 from clases.abstract.Return import *
 from clases.enviroment.Generator import Generator
-from enum import Enum, auto
+from enum import Enum
 
 class TipoRelacional(Enum):
     MAYOR = 1

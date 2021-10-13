@@ -5,6 +5,7 @@ from clases.expresiones.Literal import ExpresionLiteral
 from clases.expresiones.Aritmetica import OperacionAritmetica, OperacionesAritmeticas
 from clases.instrucciones.Print import *
 from clases.expresiones.Relacional import *
+from clases.expresiones.Logicas import *
 
 #------------------ SINTACTICO ---------------------------
 precedence = (
@@ -77,6 +78,17 @@ def p_expresion_relacional(t):
         t[0]=OperacionRelacional(t[1],t[3],TipoRelacional.IGUAL_IGUAL,t.lineno(2),t.lexpos(2))
     else:
         t[0]=OperacionRelacional(t[1],t[3],TipoRelacional.DIFERENTE,t.lineno(2),t.lexpos(2))
+
+def p_expresion_logica(t):
+    '''expresion    :   LNOT expresion
+                    |   expresion LOR expresion
+                    |   expresion LAND expresion'''
+    if t.slice[2].type=="LOR":
+        t[0]=Logica(t[1],t[3],OperacionesLogicas.OR,t.lineno(2),t.lexpos(2))
+    elif t.slice[2].type=="LAND":
+        t[0]=Logica(t[1],t[3],OperacionesLogicas.AND,t.lineno(2),t.lexpos(2))
+    elif t.slice[1].type=="LNOT":
+        t[0]=Logica(t[2],None,OperacionesLogicas.NOT,t.lineno(1),t.lexpos(1))
 
 def p_final_expresion(t):
     '''final_expresion  :   PARENTESIS_IZQ expresion PARENTESIS_DER
