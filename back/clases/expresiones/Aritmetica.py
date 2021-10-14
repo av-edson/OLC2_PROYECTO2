@@ -9,6 +9,7 @@ class OperacionesAritmeticas(Enum):
     MULTI = 2
     DIV = 3
     MODULO=4
+    POTENCIA=5
 
 class OperacionAritmetica(Expresion):
     def __init__(self,izquierdo,derecho,tipo, line, column):
@@ -30,19 +31,15 @@ class OperacionAritmetica(Expresion):
 
             if(self.tipo==OperacionesAritmeticas.SUMA):
                 res = self.sumaRestaMult(izq,der)
-                if res == None: return Return()
                 ope="+"
             elif (self.tipo==OperacionesAritmeticas.RESTA):
                 res = self.sumaRestaMult(izq,der)
-                if res == None: return Return()
                 ope="-"
             elif (self.tipo==OperacionesAritmeticas.MULTI):
                 res = self.sumaRestaMult(izq,der)
-                if res == None: return Return()
                 ope="*"
             elif (self.tipo==OperacionesAritmeticas.DIV):
                 res = self.division(izq,der)
-                if res == None: return Return()
                 ope="/"
             elif (self.tipo==OperacionesAritmeticas.MODULO):
                 res = self.modulo(izq,der)
@@ -51,6 +48,16 @@ class OperacionAritmetica(Expresion):
                 generador.activarModulo(izq.valor,der.valor,temp)
                 res.valor = temp
                 return res
+            elif self.tipo==OperacionesAritmeticas.POTENCIA:
+                res = self.potencia(izq,der)
+                if res == None: return Return()
+                generador.funPotencia()
+                return res
+            if res ==None:
+                generador.funPrintMathError()
+                generador.callFun("mathError")
+                generador.addPrint("c",10)
+                return Return(0,Type.INT,False)
             temp = generador.addTemporal()
             generador.addExpresion(izq.valor,der.valor,ope,temp)
             res.valor = temp
@@ -108,4 +115,33 @@ class OperacionAritmetica(Expresion):
         if (izq.tipo==Type.FLOAT or der.tipo==Type.FLOAT):
             return Return(0,Type.FLOAT,True)
         return Return(0,Type.INT,True)
+    def potencia(self,izq,der):
+        if not(izq.tipo==Type.INT or izq.tipo==Type.FLOAT):
+            print("Tipo de Dato no admitido en operacion aritmetica")
+            return 
+        if not(der.tipo==Type.INT or der.tipo==Type.FLOAT):
+            print("Tipo de Dato no admitido en operacion aritmetica")
+            return 
+        
+        aux = Generator()
+        genrador:Generator = aux.getInstance()
+        # ingresando valores a stack
+        genrador.addExpresion('P',1,'+','P')    #   p=p+1
+        genrador.setStack('P',izq.valor)        #   stack[int(P)]=izq;
+        genrador.addExpresion('P',1,'+','P')    #   p=p+1
+        genrador.setStack('P',der.valor)        #   stack[int(P)]=der;
+        genrador.addExpresion('P',1,'+','P')    #   p=p+1
+        genrador.callFun("potencia")
+
+        # recuperamos el dato y mostramos
+        resultado = genrador.addTemporal()
+        genrador.getStack(resultado,'P')
+        res = Return()
+        if (izq.tipo==Type.FLOAT or der.tipo==Type.FLOAT):
+            res= Return(0,Type.FLOAT,True)
+        else:
+            res= Return(0,Type.INT,True)
+
+        res.valor = resultado
+        return res
 

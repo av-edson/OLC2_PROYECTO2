@@ -43,7 +43,8 @@ class ExpresionLiteral(Expresion):
                 generator.setHeap('H',-1)
                 generator.nextHeap()
                 return Return(retorno,Type.STRING,True)
-
+            elif self.tipo == Type.CHAR:
+                return Return(ord(self.valor),Type.CHAR,False)
 
             else:
                 print('falta culo')

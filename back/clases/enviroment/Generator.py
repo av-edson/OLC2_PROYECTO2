@@ -37,6 +37,7 @@ class Generator:
         self.diccionarioNativas["mathError"] = False
         self.diccionarioNativas["printString"] = False
         self.diccionarioNativas["mathMod"] = False
+        self.diccionarioNativas["potencia"]=False
 
     # ----------------------  OBTENER STATICO -------------------
     def getInstance(self):
@@ -223,3 +224,48 @@ class Generator:
     def activarModulo(self,izquierdo,derecho,resultado):
         self.diccionarioNativas["mathMod"]=True
         self.ingresarCodigo(f'{resultado}=math.Mod({izquierdo},{derecho});\n')
+    
+    def funPotencia(self):
+        if(self.diccionarioNativas["potencia"]):
+            return
+        self.diccionarioNativas["potencia"] = True
+        self.inNativas=True
+        
+        self.addInicioFuncion("potencia")
+        # label salir funcion
+        returnLb = self.newLabel()
+        finPotencia = self.newLabel()
+
+
+        contenidoBase = self.addTemporal()
+
+        contenidoPotencia = self.addTemporal()
+
+        # colocamos el puntero uno despues que es el stack del return
+        self.addExpresion('P','2','-','P')
+        self.getStack(contenidoBase,'P')
+        # siguiente puntero
+        self.addExpresion('P',1,'+','P')
+        # recuperados valor de potencia del stack
+        self.getStack(contenidoPotencia,'P')
+
+        tempComparacion = contenidoPotencia
+        tempMulti = self.addTemporal()
+        tempResultado = self.addTemporal()
+
+        # valor que se multiplica
+        self.addExpresion(contenidoBase,contenidoBase,"*",tempMulti)
+
+        self.putLabel(finPotencia)
+        self.addIf(tempComparacion, '1', '==', returnLb)
+        # operaciones matematicas
+        self.addExpresion(tempMulti,tempResultado,'+',tempResultado)
+        self.addExpresion(contenidoPotencia,1,'-',contenidoPotencia)
+        self.addGoto(finPotencia)
+
+        self.putLabel(returnLb)
+        #puntero a lugar de return
+        self.addExpresion('P',2,'-','P')
+        self.setStack('P',tempResultado)
+        self.addEndFuncion()
+        self.inNativas = False

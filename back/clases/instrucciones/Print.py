@@ -24,7 +24,7 @@ class Imprimir(Instruccion):
                 lista.append(res)   
             if self.tipo==TipoImpresion.PRINT:
                 self.ImprimirSimple(lista,enviroment)
-            else: self.ImprimirML(lista)
+            else: self.ImprimirML(lista,enviroment)
         except:
             print("error inesperado en el print")
         
@@ -59,10 +59,12 @@ class Imprimir(Instruccion):
                 temp = generador.addTemporal()
                 generador.getStack(temp,'P')
                 generador.retEnv(enviroment.size)
+            elif expre.tipo==Type.CHAR:
+                generador.addPrint('c',expre.valor)
 
         generador.addPrint("c",10)
     
-    def ImprimirML(self, lista):
+    def ImprimirML(self, lista,enviroment):
         genAux = Generator()
         generador = genAux.getInstance()
         for expre in lista:
@@ -70,4 +72,15 @@ class Imprimir(Instruccion):
                 generador.addPrint("d",expre.valor)
             elif expre.tipo == Type.FLOAT:
                 generador.addPrint("f",expre.valor)
+            elif expre.tipo==Type.STRING:
+                generador.funPrintString()
+                temporalParametro = generador.addTemporal()
+                generador.addExpresion('P',enviroment.size,'+',temporalParametro)
+                generador.addExpresion(temporalParametro,'1','+',temporalParametro)
+
+                generador.newEnv(enviroment.size)
+                generador.callFun('printString')
+                temp = generador.addTemporal()
+                generador.getStack(temp,'P')
+                generador.retEnv(enviroment.size)
             generador.addPrint("c",10)
