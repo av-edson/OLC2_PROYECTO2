@@ -36,7 +36,9 @@ class OperacionAritmetica(Expresion):
                 res = self.sumaRestaMult(izq,der)
                 ope="-"
             elif (self.tipo==OperacionesAritmeticas.MULTI):
-                res = self.sumaRestaMult(izq,der)
+                res = self.multiplicacion(izq,der)
+                if res.tipo==Type.STRING:
+                    return res
                 ope="*"
             elif (self.tipo==OperacionesAritmeticas.DIV):
                 res = self.division(izq,der)
@@ -51,6 +53,7 @@ class OperacionAritmetica(Expresion):
             elif self.tipo==OperacionesAritmeticas.POTENCIA:
                 res = self.potencia(izq,der)
                 if res == None: return Return()
+                if res.tipo==Type.STRING: return res
                 generador.funPotencia()
                 return res
             if res ==None:
@@ -76,6 +79,35 @@ class OperacionAritmetica(Expresion):
         if (izq.tipo==Type.FLOAT or der.tipo==Type.FLOAT):
             return Return(0,Type.FLOAT,True)
         return Return(0,Type.INT,True)
+    
+    def multiplicacion(self,izq,der):
+        if not(izq.tipo==Type.INT or izq.tipo==Type.FLOAT or izq.tipo==Type.STRING):
+            print("Tipo de Dato no admitido en operacion aritmetica")
+            return 
+        if not(der.tipo==Type.INT or der.tipo==Type.FLOAT or der.tipo==Type.STRING):
+            print("Tipo de Dato no admitido en operacion aritmetica")
+            return 
+        if (izq.tipo==Type.STRING or der.tipo==Type.STRING):
+            resultado = str(izq.valor)+str(der.valor)
+            aux = Generator()
+            generador = aux.getInstance()
+            generador.funConcatenarString()
+            # demas codigo
+            generador.addComent("aritmetica concatenacion")
+            generador.setStack('P',izq.valor)
+            generador.addExpresion('P','1','+','P')
+            generador.setStack('P',der.valor)
+            generador.addExpresion('P','1','+','P')
+            generador.callFun("concatenarString")
+            generador.addExpresion('P','2','-','P')
+            tempRtrn = generador.addTemporal()
+            generador.addExpresion('P','1','-',tempRtrn)
+            generador.addComent("fin concatenacion")
+            return Return(tempRtrn,Type.STRING,True)
+        if (izq.tipo==Type.FLOAT or der.tipo==Type.FLOAT):
+            return Return(0,Type.FLOAT,True)
+        return Return(0,Type.INT,True)
+    
     def division(self,izq,der):
         if not(izq.tipo==Type.INT or izq.tipo==Type.FLOAT):
             print("Tipo de Dato no admitido en operacion aritmetica")
@@ -83,14 +115,15 @@ class OperacionAritmetica(Expresion):
         if not(der.tipo==Type.INT or der.tipo==Type.FLOAT):
             print("Tipo de Dato no admitido en operacion aritmetica")
             return 
-        if int(der.valor)==0:
-            print("Division por 0 no admitida")
-            aux = Generator()
-            generador = aux.getInstance()
-            generador.funPrintMathError()
-            generador.callFun("mathError")
-            generador.addPrint("c",10)
-            return 
+        
+        #if int(der.valor)==0:
+        #    print("Division por 0 no admitida")
+        #    aux = Generator()
+        #    generador = aux.getInstance()
+        #    generador.funPrintMathError()
+        #    generador.callFun("mathError")
+        #    generador.addPrint("c",10)
+        #    return 
         if (izq.tipo==Type.FLOAT or der.tipo==Type.FLOAT):
             return Return(0,Type.FLOAT,True)
         else:
@@ -115,7 +148,10 @@ class OperacionAritmetica(Expresion):
         if (izq.tipo==Type.FLOAT or der.tipo==Type.FLOAT):
             return Return(0,Type.FLOAT,True)
         return Return(0,Type.INT,True)
+    
     def potencia(self,izq,der):
+        if (izq.tipo==Type.STRING and der.tipo==Type.INT):
+            return self.potenciaString(izq,der)
         if not(izq.tipo==Type.INT or izq.tipo==Type.FLOAT):
             print("Tipo de Dato no admitido en operacion aritmetica")
             return 
@@ -145,3 +181,20 @@ class OperacionAritmetica(Expresion):
         res.valor = resultado
         return res
 
+    def potenciaString(self,izq,der):
+        aux = Generator()
+        generador = aux.getInstance()
+        generador.funcPotenciaString()
+        generador.addComent("Inicio Potencia String")
+        generador.addExpresion('P','1','+','P')
+        generador.setStack('P',izq.valor)
+        generador.addExpresion('P','1','+','P')
+        posicionRegreso = generador.addTemporal()
+        generador.addExpresion('H','','',posicionRegreso)
+        generador.setStack('P',der.valor)
+        generador.addExpresion('P','1','+','P')
+        generador.callFun("potenciaString")
+        generador.addExpresion('P','1','-','P')
+        generador.addComent("Fin potencia String")
+
+        return Return(posicionRegreso,Type.STRING,True)

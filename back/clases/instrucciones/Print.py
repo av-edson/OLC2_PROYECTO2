@@ -31,6 +31,7 @@ class Imprimir(Instruccion):
     def ImprimirSimple(self,lista,enviroment):
         genAux = Generator()
         generador = genAux.getInstance()
+        generador.addComent("Inicio Comentario")
         for expre in lista:
             if expre.tipo == Type.INT:
                 generador.addPrint("d",expre.valor)
@@ -63,10 +64,12 @@ class Imprimir(Instruccion):
                 generador.addPrint('c',expre.valor)
 
         generador.addPrint("c",10)
+        generador.addComent("Fin Comentario")
     
     def ImprimirML(self, lista,enviroment):
         genAux = Generator()
         generador = genAux.getInstance()
+        generador.addComent("Inicio Comentario")
         for expre in lista:
             if expre.tipo == Type.INT:
                 generador.addPrint("d",expre.valor)
@@ -84,3 +87,4 @@ class Imprimir(Instruccion):
                 generador.getStack(temp,'P')
                 generador.retEnv(enviroment.size)
             generador.addPrint("c",10)
+            generador.addComent("Fin Comentario")
