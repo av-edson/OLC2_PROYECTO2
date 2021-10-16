@@ -42,7 +42,27 @@ class OperacionAritmetica(Expresion):
                 ope="*"
             elif (self.tipo==OperacionesAritmeticas.DIV):
                 res = self.division(izq,der)
+                if res==None: return Return()
                 ope="/"
+                aux = Generator()
+                generador = aux.getInstance()
+                temp = generador.addTemporal()
+                divisor = generador.addTemporal()
+                generador.addExpresion(der.valor,'','',divisor)
+                generador.funPrintMathError()
+
+                lblError = generador.newLabel()
+                lblContinue = generador.newLabel()
+                generador.addIf(divisor,'0','!=',lblError)
+                generador.callFun("mathError")
+                generador.addPrint("c",10)
+                generador.addExpresion(0,'','',temp)
+                generador.addGoto(lblContinue)
+                generador.putLabel(lblError)
+                generador.addExpresion(izq.valor,divisor,ope,temp)
+                generador.putLabel(lblContinue)
+                res.valor = temp
+                return res
             elif (self.tipo==OperacionesAritmeticas.MODULO):
                 res = self.modulo(izq,der)
                 if res == None: return Return()
@@ -124,6 +144,8 @@ class OperacionAritmetica(Expresion):
         #    generador.callFun("mathError")
         #    generador.addPrint("c",10)
         #    return 
+        # para validar que no sea 0
+
         if (izq.tipo==Type.FLOAT or der.tipo==Type.FLOAT):
             return Return(0,Type.FLOAT,True)
         else:
