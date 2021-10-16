@@ -24,8 +24,8 @@ class OperacionAritmetica(Expresion):
         generador = aux.getInstance()
         # compilando valores
         try:
-            der=self.derecho.compilar(enviroment)
             izq=self.izquierdo.compilar(enviroment)
+            der=self.derecho.compilar(enviroment)
             ope = ""
             res = Return()
 
@@ -114,16 +114,16 @@ class OperacionAritmetica(Expresion):
             generador.funConcatenarString()
             # demas codigo
             generador.addComent("aritmetica concatenacion")
-            generador.setStack('P',izq.valor)
-            generador.addExpresion('P','1','+','P')
-            generador.setStack('P',der.valor)
-            generador.addExpresion('P','1','+','P')
+            generador.setHeap('H',izq.valor)
+            generador.nextHeap()
+            generador.setHeap('H',der.valor)
+            generador.nextHeap()
+            generador.setHeap('H','-1')
+            generador.nextHeap()
             generador.callFun("concatenarString")
-            generador.addExpresion('P','2','-','P')
-            tempRtrn = generador.addTemporal()
-            generador.addExpresion('P','1','-',tempRtrn)
+            #generador.addExpresion(izq.valor,'','','H')
             generador.addComent("fin concatenacion")
-            return Return(tempRtrn,Type.STRING,True)
+            return Return(izq.valor,Type.STRING,True)
         if (izq.tipo==Type.FLOAT or der.tipo==Type.FLOAT):
             return Return(0,Type.FLOAT,True)
         return Return(0,Type.INT,True)
@@ -135,16 +135,6 @@ class OperacionAritmetica(Expresion):
         if not(der.tipo==Type.INT or der.tipo==Type.FLOAT):
             print("Tipo de Dato no admitido en operacion aritmetica")
             return 
-        
-        #if int(der.valor)==0:
-        #    print("Division por 0 no admitida")
-        #    aux = Generator()
-        #    generador = aux.getInstance()
-        #    generador.funPrintMathError()
-        #    generador.callFun("mathError")
-        #    generador.addPrint("c",10)
-        #    return 
-        # para validar que no sea 0
 
         if (izq.tipo==Type.FLOAT or der.tipo==Type.FLOAT):
             return Return(0,Type.FLOAT,True)

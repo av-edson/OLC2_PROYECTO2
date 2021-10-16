@@ -201,7 +201,7 @@ class Generator:
         self.putLabel(compareLb)
 
         self.getHeap(tempC, tempH)
-        self.addExpresion('H', '1', '-', 'H')
+        #self.addExpresion('H', '1', '-', 'H')
         self.addIf(tempC, '-1', '==', returnLb)
 
         self.addPrint('c', tempC)
@@ -289,17 +289,18 @@ class Generator:
         self.diccionarioNativas["concatenarString"] = True
         self.inNativas = True
         self.addInicioFuncion("concatenarString")
-        temp1 = self.addTemporal()
-        self.addExpresion('P', '2', '-', temp1)
-        index1 = self.addTemporal()
-        self.getStack(index1, temp1)
+        temp1 = self.addTemporal() # t2
+        self.addExpresion('H', '3', '-', temp1)
+        index1 = self.addTemporal() # t3
+        self.getHeap(index1, temp1)
+        tempReturn = self.addTemporal()
+        self.addExpresion(index1,'','',tempReturn)
 
-        temp2 = self.addTemporal()
+        temp2 = self.addTemporal() # t4
         self.addExpresion(temp1, '1', '+', temp2)
-        index2 = self.addTemporal()
-        self.getStack(index2, temp2)
-        self.setStack('P', 'H')
-        self.addExpresion('P', '1', '+', 'P')
+        index2 = self.addTemporal() # t5
+        self.getHeap(index2, temp2)
+        self.addExpresion(index1, '', '', 'H')
 
         returnLb = self.newLabel()
         recorrido1Lb = self.newLabel()
@@ -326,6 +327,10 @@ class Generator:
         self.putLabel(returnLb)
         self.setHeap('H', '-1')
         self.nextHeap()
+        self.setHeap('H',tempReturn)
+        self.nextHeap()
+        self.setHeap('H', '-1')
+        self.addExpresion('H','1','-','H')
 
         self.addEndFuncion()
         self.inNativas = False
