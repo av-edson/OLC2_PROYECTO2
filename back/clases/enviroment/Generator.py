@@ -187,13 +187,9 @@ class Generator:
         returnLb = self.newLabel()
         # label buscar fin de cadena
         compareLb = self.newLabel()
-        # temporal puntero stack
-        tempP = self.addTemporal()
         # temporal heacp
         tempH = self.addTemporal()
-
-        self.addExpresion('P', 1, '+', tempP)
-        self.getStack(tempH, tempP)
+        self.getHeap(tempH,'H')
 
         # Temporal para comparar
         tempC = self.addTemporal()
@@ -343,12 +339,14 @@ class Generator:
 
         self.addInicioFuncion("potenciaString")
         indexStack = self.addTemporal() # a4 
-        self.addExpresion('P','2','-',indexStack)
+        self.addExpresion('H','3','-',indexStack)
         tempPalabra = self.addTemporal() # a2
         self.addExpresion(indexStack,'1','+',tempPalabra)
         indexPotencia = self.addTemporal() # a3
-        self.getStack(indexPotencia,tempPalabra) 
+        self.getHeap(indexPotencia,tempPalabra) 
         self.addExpresion(indexPotencia,'1','+',indexPotencia)
+        regreso = self.addTemporal() # a6
+        self.getHeap(regreso,indexStack)
 
         # almacenando posicion en el regreso
         posicionRegreso = self.addTemporal() # a5
@@ -362,7 +360,7 @@ class Generator:
         self.putLabel(lbCiclo1)
         self.addExpresion(indexPotencia,'1','-',indexPotencia)
         iterador = self.addTemporal() # a0 
-        self.getStack(iterador,indexStack)
+        self.getHeap(iterador,indexStack)
         self.addIf(indexPotencia,'0','==',lblReturn)
         self.addGoto(lbCiclo2)
         #segundo label
@@ -378,8 +376,15 @@ class Generator:
         self.putLabel(lblReturn)
         self.setHeap('H','-1')
         self.nextHeap()
-        self.addExpresion('P','1','+','P')
-        self.setStack('P',posicionRegreso)        
+        self.setHeap('H',regreso)
+        self.nextHeap()
+        self.setHeap('H',posicionRegreso)
+        self.nextHeap()
+        self.setHeap('H','-1')
+        self.addExpresion('H','2','-','H')      
+        tempReturn = self.addTemporal()
+        self.addExpresion('P','1','+',tempReturn)
+        self.setStack(tempReturn,posicionRegreso)
 
         self.addEndFuncion()
         self.inNativas = False
