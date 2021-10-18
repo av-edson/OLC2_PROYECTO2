@@ -60,6 +60,7 @@ class Imprimir(Instruccion):
                 temp = generador.addTemporal()
                 generador.getStack(temp,'P')
                 generador.retEnv(enviroment.size)
+                generador.addExpresion(expre.valor,'','','H')
             elif expre.tipo==Type.CHAR:
                 generador.addPrint('c',expre.valor)
 
@@ -86,5 +87,6 @@ class Imprimir(Instruccion):
                 temp = generador.addTemporal()
                 generador.getStack(temp,'P')
                 generador.retEnv(enviroment.size)
+                generador.addExpresion(expre.valor,'','','H')
             generador.addPrint("c",10)
             generador.addComent("Fin Impresion")

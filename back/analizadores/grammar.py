@@ -6,6 +6,8 @@ from clases.expresiones.Aritmetica import OperacionAritmetica, OperacionesAritme
 from clases.instrucciones.Print import *
 from clases.expresiones.Relacional import *
 from clases.expresiones.Logicas import *
+from clases.expresiones.Variable import *
+from clases.instrucciones.Declaracion import *
 
 #------------------ SINTACTICO ---------------------------
 precedence = (
@@ -31,7 +33,8 @@ def p_instrucciones_instruccion(t) :
     'instrucciones    : instruccion '
     t[0] = [t[1]]
 def p_instruccion(t):
-    '''instruccion  :   imprimir PUNTOCOMA'''
+    '''instruccion  :   imprimir PUNTOCOMA
+                    |   declaracion PUNTOCOMA'''
     t[0]=t[1]
 def p_instruccion_error(t):
     '''instruccion  :   error PUNTOCOMA'''
@@ -119,6 +122,8 @@ def p_final_expresion(t):
             t[0] = ExpresionLiteral(Type.CHAR,str(t[1]),t.lineno(1),t.lexpos(0))
         elif t.slice[1].type == "CADENA":
             t[0] = ExpresionLiteral(Type.STRING,str(t[1]),t.lineno(1),t.lexpos(0))
+        elif t.slice[1].type=="ID":
+            t[0] = LLamadaVariable(str(t[1]),t.lineno(1),t.lexpos(0))
     else:
         t[0] = t[2]
 
@@ -147,6 +152,34 @@ def p_imprimir(t):
         else:
             t[0]=Imprimir([],TipoImpresion.PRINTLN,t.lineno(1),t.lexpos(1))
 
+# ------------------------------ DECLARACION ----------------
+def p_declaracion(t):
+    '''declaracion   :  ID IGUAL expresion  
+                    |   ID IGUAL expresion DOSPUNTOS DOSPUNTOS tipodato'''
+    if len(t)==7:
+        t[0]=Declaracion(t[1],t[3],t.lineno(1),t.lexpos(1),False,t[6])
+    else:
+        t[0]=Declaracion(t[1],t[3],t.lineno(1),t.lexpos(1))
+
+def p_tipodato(t):
+    '''tipodato :   DINT64 
+                    |   DFLOAT64 
+                    |   DBOOL 
+                    |   DSTRING 
+                    |   DCHAR 
+                    |   STRUCT'''    
+    if t.slice[1].type=='DINT64':
+        t[0]=Type.INT
+    elif t.slice[1].type=='DFLOAT64':
+        t[0]=Type.FLOAT
+    elif t.slice[1].type=='DBOOL':
+        t[0]=Type.BOOL
+    elif t.slice[1].type=='DSTRING':
+        t[0]=Type.STRING
+    elif t.slice[1].type=='DCHAR':
+        t[0]=Type.CHAR
+    elif t.slice[1].type=='STRUCT':
+        t[0]=Type.STRUCT
                 
 import ply.yacc as yacc
 

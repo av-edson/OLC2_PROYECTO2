@@ -3,14 +3,12 @@ from clases.abstract.Return import *
 
 class Simbolo:
 
-    def __init__(self,identificador,posicion,globalVar,inHeap,tipo=None,fila=None,columna=None,):
+    def __init__(self,identificador,tipo,posicion,globalVar,inHeap,strucTipo=None):
         self.simbolId=identificador
         self.tipo:Type=tipo
-        self.fila = fila
-        self.columna = columna
         self.posicion=posicion
         self.globalVar = globalVar
         self.inHeap = inHeap
-
+        self.tipoStruct = strucTipo
         self.value = None
        

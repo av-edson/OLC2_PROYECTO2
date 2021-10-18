@@ -206,7 +206,7 @@ class OperacionAritmetica(Expresion):
         generador.setHeap('H','-1')
         generador.nextHeap()
         generador.callFun("potenciaString")
-        generador.getHeap('H','H')
+        #generador.getHeap('H','H')
         generador.addComent("Fin potencia String")
 
         return Return(0,Type.STRING,True)

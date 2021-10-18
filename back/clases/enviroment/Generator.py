@@ -381,7 +381,7 @@ class Generator:
         self.setHeap('H',posicionRegreso)
         self.nextHeap()
         self.setHeap('H','-1')
-        self.addExpresion('H','2','-','H')      
+        self.addExpresion('H','1','-','H')      
         tempReturn = self.addTemporal()
         self.addExpresion('P','1','+',tempReturn)
         self.setStack(tempReturn,posicionRegreso)
