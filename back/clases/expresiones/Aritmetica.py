@@ -208,7 +208,11 @@ class OperacionAritmetica(Expresion):
         generador.setHeap('H','-1')
         generador.nextHeap()
         generador.callFun("potenciaString")
+
+        posicionRegreso =generador.addTemporal()
+        generador.addExpresion('H','2','-',posicionRegreso)
+        generador.getHeap(posicionRegreso,posicionRegreso)
         #generador.getHeap('H','H')
         generador.addComent("Fin potencia String")
 
-        return Return(0,Type.STRING,True)
+        return Return(posicionRegreso,Type.STRING,True)
