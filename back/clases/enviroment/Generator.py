@@ -189,7 +189,8 @@ class Generator:
         compareLb = self.newLabel()
         # temporal heacp
         tempH = self.addTemporal()
-        self.getHeap(tempH,'H')
+        self.addExpresion('H','2','-',tempH)
+        self.getHeap(tempH,tempH)
 
         # Temporal para comparar
         tempC = self.addTemporal()
@@ -326,7 +327,8 @@ class Generator:
         self.setHeap('H',tempReturn)
         self.nextHeap()
         self.setHeap('H', '-1')
-        self.addExpresion('H','1','-','H')
+        self.nextHeap()
+        #self.addExpresion('H','1','-','H')
 
         self.addEndFuncion()
         self.inNativas = False
@@ -375,16 +377,36 @@ class Generator:
         # label return
         self.putLabel(lblReturn)
         self.setHeap('H','-1')
+        #self.nextHeap()
+        #self.setHeap('H',regreso)
+        #self.nextHeap()
+        #self.setHeap('H',posicionRegreso)
+        #self.nextHeap()
+        #self.setHeap('H','-1')
+        #self.addExpresion('H','1','-','H')      
+        #tempReturn = self.addTemporal()
+        #self.addExpresion('P','1','+',tempReturn)
+        #self.setStack(tempReturn,posicionRegreso)
+        self.addExpresion(regreso,'','','H ')
+        reescribir = self.newLabel()
+        salida = self.newLabel()
+        self.putLabel(reescribir)
+        index = self.addTemporal()
+        self.getHeap(index,posicionRegreso)
+        self.addIf(index,'-1','==',salida)
+        self.setHeap('H',index)
+        self.nextHeap()
+        self.addExpresion(posicionRegreso,'1','+',posicionRegreso)
+        self.addGoto(reescribir)
+
+        self.putLabel(salida)
+        self.setHeap('H','-1')
         self.nextHeap()
         self.setHeap('H',regreso)
         self.nextHeap()
-        self.setHeap('H',posicionRegreso)
-        self.nextHeap()
         self.setHeap('H','-1')
-        self.addExpresion('H','1','-','H')      
-        tempReturn = self.addTemporal()
-        self.addExpresion('P','1','+',tempReturn)
-        self.setStack(tempReturn,posicionRegreso)
+        self.nextHeap()
+        #self.addExpresion('H','1','-','H')
 
         self.addEndFuncion()
         self.inNativas = False

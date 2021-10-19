@@ -71,7 +71,7 @@ class OperacionAritmetica(Expresion):
                 res.valor = temp
                 return res
             elif self.tipo==OperacionesAritmeticas.POTENCIA:
-                res = self.potencia(izq,der)
+                res = self.potencia(izq,der,enviroment)
                 if res == None: return Return()
                 if res.tipo==Type.STRING: return res
                 generador.funPotencia()
@@ -108,7 +108,7 @@ class OperacionAritmetica(Expresion):
             print("Tipo de Dato no admitido en operacion aritmetica")
             return 
         if (izq.tipo==Type.STRING or der.tipo==Type.STRING):
-            resultado = str(izq.valor)+str(der.valor)
+            #resultado = str(izq.valor)+str(der.valor)
             aux = Generator()
             generador = aux.getInstance()
             generador.funConcatenarString()
@@ -161,7 +161,7 @@ class OperacionAritmetica(Expresion):
             return Return(0,Type.FLOAT,True)
         return Return(0,Type.INT,True)
     
-    def potencia(self,izq,der):
+    def potencia(self,izq,der,enviroment):
         if (izq.tipo==Type.STRING and der.tipo==Type.INT):
             return self.potenciaString(izq,der)
         if not(izq.tipo==Type.INT or izq.tipo==Type.FLOAT):
@@ -174,16 +174,18 @@ class OperacionAritmetica(Expresion):
         aux = Generator()
         genrador:Generator = aux.getInstance()
         # ingresando valores a stack
-        genrador.addExpresion('P',1,'+','P')    #   p=p+1
+        genrador.addExpresion('P',enviroment.size,'+','P')    #   p=p+1
         genrador.setStack('P',izq.valor)        #   stack[int(P)]=izq;
         genrador.addExpresion('P',1,'+','P')    #   p=p+1
         genrador.setStack('P',der.valor)        #   stack[int(P)]=der;
         genrador.addExpresion('P',1,'+','P')    #   p=p+1
         genrador.callFun("potencia")
 
+
         # recuperamos el dato y mostramos
-        resultado = genrador.addTemporal()
-        genrador.getStack(resultado,'P')
+        resultado = genrador.addTemporal()  # t
+        genrador.getStack(resultado,'P')    #t=stack(P)
+        genrador.addExpresion('P',enviroment.size,'-','P')
         res = Return()
         if (izq.tipo==Type.FLOAT or der.tipo==Type.FLOAT):
             res= Return(0,Type.FLOAT,True)

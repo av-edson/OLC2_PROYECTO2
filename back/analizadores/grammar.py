@@ -18,7 +18,7 @@ precedence = (
     ('left','SUMA','RESTA'),
     ('left','MULTI','DIV','MODULO'),
     ('left','POTENCIA'),
-   # ('right','UMENOS'),
+    ('right','UMENOS'),
     ('left','PARENTESIS_IZQ','PARENTESIS_DER'),
 )
 def p_init(t) :
@@ -44,9 +44,14 @@ def p_instruccion_error(t):
 
 ## -------------------------------- EXPRESIONES --------------------------
 def p_expresion(t):
-    '''expresion    :   expresion_bin
+    '''expresion    :   RESTA expresion %prec UMENOS
+                    |   expresion_bin
                     |   final_expresion'''
-    t[0]=t[1]
+    if t.slice[1].type=="RESTA":
+        t[0] = OperacionAritmetica(ExpresionLiteral(Type.INT,int(-1),t.lineno(1),t.lexpos(0))
+        ,t[2],OperacionesAritmeticas.MULTI,t.lineno(1),t.lexpos(0))
+    else:
+        t[0]=t[1]
 
 def p_expresion_binaria(t):
     '''expresion_bin    :   expresion SUMA expresion

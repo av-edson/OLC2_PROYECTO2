@@ -15,7 +15,7 @@ class LLamadaVariable(Expresion):
 
         variable = enviroment.getVariable(self.id)
         if variable==None:
-            print("variable no existe")
+            print("variable no existe "+self.id)
             return Return()
         
         # temp para guardar variable

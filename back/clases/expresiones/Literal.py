@@ -42,6 +42,10 @@ class ExpresionLiteral(Expresion):
                     generator.nextHeap()
                 generator.setHeap('H',-1)
                 generator.nextHeap()
+                generator.setHeap('H',retorno)
+                generator.nextHeap()
+                generator.setHeap('H',-1)
+                generator.nextHeap()
                 return Return(retorno,Type.STRING,True)
             elif self.tipo == Type.CHAR:
                 return Return(ord(self.valor),Type.CHAR,False)
