@@ -30,8 +30,10 @@ class Declaracion(Instruccion):
             aux = (valor.tipo==Type.STRING or valor.tipo==Type.STRUCT)
             if not aux:
                 nueva = enviroment.sabeVar(self.id,valor.tipo,aux)
+            elif valor.tipo == Type.STRING:
+                nueva = enviroment.sabeVar(self.id,self.tipo,True)
             else:
-                print("declaracion de strings falta")
+                print("declaracion structs y listas falta")
         nueva.tipo = valor.tipo
 
         #posicion de la variable
@@ -52,6 +54,9 @@ class Declaracion(Instruccion):
             generador.setStack(temporalPosicion,'0')
             
             generador.putLabel(tempLb)
+        elif valor.tipo==Type.STRING:
+            generador.addComent("declaracion string")
+            generador.setStack(temporalPosicion,valor.valor)
         else:
             generador.setStack(temporalPosicion,valor.valor)
 

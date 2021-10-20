@@ -44,6 +44,34 @@ class LLamadaVariable(Expresion):
                 regreso.trueLb = self.trueLb
                 regreso.falseLb = self.falseLb
                 return regreso
+            elif variable.tipo==Type.STRING:
+                #index = generador.addTemporal()
+                ret = generador.addTemporal()
+                generador.addExpresion('H','','',ret)   # a1 = H
+                generador.addExpresion(temp,'1','-',temp)   #t2 = t2 - 1
+                labelCiclo = generador.newLabel()
+                labelSalida = generador.newLabel()
+                generador.addGoto(labelCiclo)               #goto L66
+                generador.putLabel(labelCiclo)              #L6:
+                
+                generador.addExpresion(temp,'1','+',temp)
+                comparador = generador.addTemporal()
+                generador.getHeap(comparador,temp)
+                generador.addIf(comparador,'-1','==',labelSalida)
+                generador.setHeap('H',comparador)
+                generador.nextHeap()
+                generador.addGoto(labelCiclo)
+
+                generador.putLabel(labelSalida)
+                generador.setHeap('H','-1')
+                generador.nextHeap()
+                generador.setHeap('H',ret)
+                generador.nextHeap()
+                generador.setHeap('H','-1')
+                generador.nextHeap()
+
+                generador.addComent("Fin llamada Variable")
+                return Return(ret,Type.STRING,True)
 
             return Return()
         except:

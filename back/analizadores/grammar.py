@@ -7,7 +7,7 @@ from clases.instrucciones.Print import *
 from clases.expresiones.Relacional import *
 from clases.expresiones.Logicas import *
 from clases.expresiones.Variable import *
-from clases.instrucciones.Declaracion import *
+from clases.instrucciones.Declaracion import Declaracion
 from clases.expresiones.Nativas import *
 
 #------------------ SINTACTICO ---------------------------

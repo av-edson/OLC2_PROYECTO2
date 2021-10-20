@@ -17,7 +17,7 @@ try:
             d=instruccion.compilar(gl)
         x = 4
     #print(generador.getCodigo())
-    f = open('salida.txt','w',encoding="UTF-8")
+    f = open('pruebas/salida.go','w',encoding="UTF-8")
     f.write(generador.getCodigo())
     f.close()
 
