@@ -25,7 +25,7 @@ class auxGenerador:
         self.ge.getHeap(index1,tempAux1)            # a1 = heap[a0]
 
         tempAux2 = self.ge.addTemporal()            # a2
-        self.ge.addExpresion('H','3','-',tempAux2)  # a2 = a0+1
+        self.ge.addExpresion(tempAux1,'1','+',tempAux2)  # a2 = a0+1
         index2 = self.ge.addTemporal()              #a3
         self.ge.getHeap(index2,tempAux2)            # a3 = heap[a2]
         self.ge.addGoto(labelCiclo)             #goto L0

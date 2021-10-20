@@ -38,6 +38,8 @@ class OperacionRelacional(Expresion):
                     generator.addGoto(self.falseLb)
                 # COMPARACION CADENAS
                 elif izqi.tipo==Type.STRING and dere.tipo==Type.STRING:
+                    if not(self.tipo==TipoRelacional.IGUAL_IGUAL or self.tipo==TipoRelacional.DIFERENTE):
+                        return self.comparacionString(izqi,dere)
                     generator.setHeap('H',izqi.valor)
                     generator.nextHeap()
                     generator.setHeap('H',dere.valor)
@@ -55,6 +57,7 @@ class OperacionRelacional(Expresion):
                     valorRetorno = generator.addTemporal()
                     generator.addExpresion('H','2','-',valorRetorno)
                     generator.getHeap(valorRetorno,valorRetorno)
+                    generator.addExpresion(izqi.valor,'','','H')
 
                     self.verLabels()
                     generator.addIf(valorRetorno,'1',self.getOperation(),self.trueLb)
@@ -127,3 +130,47 @@ class OperacionRelacional(Expresion):
             return "!="
         elif self.tipo==TipoRelacional.IGUAL_IGUAL:
             return "=="
+
+    def comparacionString(self,izq,der):
+        aux = Generator()
+        generador = aux.getInstance()
+        generador.addComent("Inicio Relacional Cadenas")
+        index1 = generador.addTemporal()
+        index2 = generador.addTemporal()
+        generador.addExpresion(izq.valor,'','',index1)
+        generador.addExpresion(der.valor,'','',index2)
+        #index1 = izq.valor
+        #index2 = der.valor
+        palabra1 = generador.addTemporal()
+        palabra2 = generador.addTemporal()
+        primerCiclo = generador.newLabel()
+        segundoCiclo = generador.newLabel()
+        salida = generador.newLabel()
+
+        generador.putLabel(primerCiclo)
+        generador.getHeap(palabra1,index1)
+        generador.addIf(palabra1,'-1','==',segundoCiclo)
+        generador.addExpresion(index1,'1','+',index1)
+        generador.addGoto(primerCiclo)
+
+        generador.putLabel(segundoCiclo)
+        generador.getHeap(palabra2,index2)
+        generador.addIf(palabra2,'-1','==',salida)
+        generador.addExpresion(index2,'1','+',index2)
+        generador.addGoto(segundoCiclo)
+
+        generador.putLabel(salida)
+        generador.addExpresion(izq.valor,'','','H')
+        generador.addExpresion(index1,izq.valor,'-',index1)
+        generador.addExpresion(index2,der.valor,'-',index2)
+        ## los label de verdadero y falso
+        self.verLabels()
+        generador.addIf(index1,index2,self.getOperation(),self.trueLb)
+        generador.addGoto(self.falseLb)
+        res = Return(0,Type.BOOL,False)
+
+        generador.addComent("Fin Relacional Cadenas")
+        res.trueLb = self.trueLb
+        res.falseLb = self.falseLb
+        
+        return res 

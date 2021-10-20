@@ -70,7 +70,8 @@ class Generator:
         return head
 
     def getCodigo(self):
-        aux = f'{self.getEncabezado()}{self.natives}\n{self.funciones}\nfunc main(){{\n{self.codigo}\n}}'
+        #aux = f'{self.getEncabezado()}{self.natives}\n{self.funciones}\nfunc main(){{\n{self.codigo}\n}}'
+        aux = f'{self.getEncabezado()}{self.natives}\nfunc main(){{\n{self.codigo}\n}}'
         return aux
 
     def ingresarCodigo(self, codigo):
