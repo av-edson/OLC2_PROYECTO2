@@ -9,6 +9,8 @@ from clases.expresiones.Logicas import *
 from clases.expresiones.Variable import *
 from clases.instrucciones.Declaracion import Declaracion
 from clases.expresiones.Nativas import *
+from clases.instrucciones.Condicionales.SentenciaIf import If
+from clases.instrucciones.BloqueInstrucciones import BloqueInstrucciones
 
 #------------------ SINTACTICO ---------------------------
 precedence = (
@@ -35,8 +37,14 @@ def p_instrucciones_instruccion(t) :
     t[0] = [t[1]]
 def p_instruccion(t):
     '''instruccion  :   imprimir PUNTOCOMA
-                    |   declaracion PUNTOCOMA'''
+                    |   declaracion PUNTOCOMA
+                    |   sentencia_if PUNTOCOMA'''
     t[0]=t[1]
+
+def p_bloque_instrucciones(t):
+    '''bloque_instrucciones :   instrucciones'''
+    t[0] = BloqueInstrucciones(t[1],t.lineno(1),t.lexpos(0))
+
 def p_instruccion_error(t):
     '''instruccion  :   error PUNTOCOMA'''
     #errores.append(Error("Error sintactico en: '"+str(t[1].value)+"'",str(t.lineno(1)), str(t.lexpos(1)),str(time.strftime("%c"))))
@@ -230,7 +238,31 @@ def p_tipodato(t):
         t[0]=Type.CHAR
     elif t.slice[1].type=='STRUCT':
         t[0]=Type.STRUCT
-                
+
+#-------------------------------------- CONDICIONALES ------------------------------------
+
+def p_sentencia_if(t):
+    '''sentencia_if  : IFST  expresion bloque_instrucciones  FIN
+                    | IFST expresion bloque_instrucciones ELSEST bloque_instrucciones  FIN
+                    | IFST expresion bloque_instrucciones elif_lista FIN'''
+    if len(t) == 5:
+        t[0] = If(t[2], t[3], t.lineno(1), t.lexpos(0))
+    elif len(t) == 7:
+        t[0] = If(t[2], t[3], t.lineno(1), t.lexpos(0), t[5])
+    elif len(t) == 6:
+        t[0] = If(t[2], t[3], t.lineno(1), t.lexpos(0), t[4])
+
+def p_elseIfList(t):
+    '''elif_lista   : ELIFST expresion bloque_instrucciones
+                    | ELIFST expresion bloque_instrucciones ELSEST bloque_instrucciones
+                    | ELIFST expresion bloque_instrucciones elif_lista'''
+    if len(t) == 4:
+        t[0] = If(t[2], t[3], t.lineno(1), t.lexpos(0))
+    elif len(t) == 6:
+        t[0] = If(t[2], t[3], t.lineno(1), t.lexpos(0), t[5])
+    elif len(t) == 5:
+        t[0] = If(t[2], t[3], t.lineno(1), t.lexpos(0), t[4])
+
 import ply.yacc as yacc
 
 def compilar(contenido):
