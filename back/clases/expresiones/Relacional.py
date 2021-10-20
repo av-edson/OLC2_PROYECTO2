@@ -1,6 +1,7 @@
 from clases.abstract.Expresion import Expresion
 from clases.abstract.Return import *
 from clases.enviroment.Generator import Generator
+from clases.enviroment.auxGenerador import auxGenerador
 from enum import Enum
 
 class TipoRelacional(Enum):
@@ -29,14 +30,37 @@ class OperacionRelacional(Expresion):
             res = Return(0,Type.BOOL,False)
 
             if izqi.tipo != Type.BOOL:
-                dere = self.der.compilar(enviroment)
+                dere:Return = self.der.compilar(enviroment)
                 # COMPARACION NUMEROS
                 if (izqi.tipo==Type.INT or izqi.tipo==Type.FLOAT) or (dere.tipo==Type.INT or dere.tipo==Type.FLOAT):
                     self.verLabels()
                     generator.addIf(izqi.valor, dere.valor, self.getOperation(), self.trueLb)
                     generator.addGoto(self.falseLb)
+                # COMPARACION CADENAS
                 elif izqi.tipo==Type.STRING and dere.tipo==Type.STRING:
-                    print("falta hacer esto")
+                    generator.setHeap('H',izqi.valor)
+                    generator.nextHeap()
+                    generator.setHeap('H',dere.valor)
+                    generator.nextHeap()
+                    generator.setHeap('H','-1')
+                    generator.nextHeap()
+                    # llamamos a crear la funcion nativa
+                    aux = auxGenerador()
+                    if self.getOperation() == "==":
+                        aux.CompararString('!=')
+                    elif self.getOperation() == "!=":
+                        aux.CompararString('==')
+                    # llamamos a la funcion
+                    generator.callFun("igualarString")
+                    valorRetorno = generator.addTemporal()
+                    generator.addExpresion('H','2','-',valorRetorno)
+                    generator.getHeap(valorRetorno,valorRetorno)
+
+                    self.verLabels()
+                    generator.addIf(valorRetorno,'1',self.getOperation(),self.trueLb)
+                    generator.addGoto(self.falseLb)
+                else:
+                    print("tipo de dato no admitido en operacion relacional")
             else:
                 if not(self.tipo==TipoRelacional.IGUAL_IGUAL or self.tipo==TipoRelacional.DIFERENTE):
                     print("no se admite booleanos en operaciones relacionales")

@@ -8,6 +8,7 @@ from clases.expresiones.Relacional import *
 from clases.expresiones.Logicas import *
 from clases.expresiones.Variable import *
 from clases.instrucciones.Declaracion import *
+from clases.expresiones.Nativas import *
 
 #------------------ SINTACTICO ---------------------------
 precedence = (
@@ -103,6 +104,38 @@ def p_expresion_logica(t):
         t[0]=Logica(t[1],t[3],OperacionesLogicas.AND,t.lineno(2),t.lexpos(2))
     elif t.slice[1].type=="LNOT":
         t[0]=Logica(t[2],None,OperacionesLogicas.NOT,t.lineno(1),t.lexpos(1))
+
+def p_expresion_funcion_nativa(t):
+    '''expresion    :   FLOG10 PARENTESIS_IZQ expresion PARENTESIS_DER
+                    |   FLOG PARENTESIS_IZQ expresion COMA expresion PARENTESIS_DER
+                    |   FSIN PARENTESIS_IZQ expresion PARENTESIS_DER
+                    |   FCOS PARENTESIS_IZQ expresion PARENTESIS_DER
+                    |   FTAN PARENTESIS_IZQ expresion PARENTESIS_DER
+                    |   FSQRT PARENTESIS_IZQ expresion PARENTESIS_DER
+                    |   UPERCASE PARENTESIS_IZQ expresion PARENTESIS_DER
+                    |   LOWERCASE PARENTESIS_IZQ expresion PARENTESIS_DER
+                    |   FLENGTH PARENTESIS_IZQ expresion PARENTESIS_DER
+                    |   FPOP LNOT PARENTESIS_IZQ expresion PARENTESIS_DER'''
+    if t.slice[1].type=="FLOG10":
+        t[0]=ExpresionNativa(OpeNativas.LOGCOMUN,t[3],t.lineno(1),t.lexpos(1))
+    elif t.slice[1].type=="FLOG":
+        t[0]=ExpresionNativa(OpeNativas.LOGBASE,t[5],t.lineno(1),t.lexpos(1),t[3])
+    elif t.slice[1].type=="FSIN":
+        t[0]=ExpresionNativa(OpeNativas.SIN,t[3],t.lineno(1),t.lexpos(1))
+    elif t.slice[1].type=="FCOS":
+        t[0]=ExpresionNativa(OpeNativas.COS,t[3],t.lineno(1),t.lexpos(1))
+    elif t.slice[1].type=="FTAN":
+        t[0]=ExpresionNativa(OpeNativas.TAN,t[3],t.lineno(1),t.lexpos(1))
+    elif t.slice[1].type=="FSQRT":
+        t[0]=ExpresionNativa(OpeNativas.RAIZ,t[3],t.lineno(1),t.lexpos(1))
+    elif t.slice[1].type=="UPERCASE":
+        t[0]=ExpresionNativa(OpeNativas.UPER,t[3],t.lineno(1),t.lexpos(1))
+    elif t.slice[1].type=="FLENGTH":
+        t[0]=ExpresionNativa(OpeNativas.LENGT,t[3],t.lineno(1),t.lexpos(1))
+    elif t.slice[1].type=="FPOP":
+        t[0]=ExpresionNativa(OpeNativas.POP,t[4],t.lineno(1),t.lexpos(1))
+    else:
+        t[0]=ExpresionNativa(OpeNativas.LOWER,t[3],t.lineno(1),t.lexpos(1))
 
 def p_final_expresion(t):
     '''final_expresion  :   PARENTESIS_IZQ expresion PARENTESIS_DER

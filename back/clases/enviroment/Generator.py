@@ -43,6 +43,9 @@ class Generator:
         self.diccionarioNativas["potencia"] = False
         self.diccionarioNativas["concatenarString"] = False
         self.diccionarioNativas["potenciaString"] = False
+        self.diccionarioNativas["igualarString"] = False
+        self.diccionarioNativas["upper"]=False
+        self.diccionarioNativas["lower"]=False
 
     # ----------------------  OBTENER STATICO -------------------
     def getInstance(self):
@@ -410,3 +413,4 @@ class Generator:
 
         self.addEndFuncion()
         self.inNativas = False
+
