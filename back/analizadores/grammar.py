@@ -199,6 +199,18 @@ def p_declaracion(t):
     else:
         t[0]=Declaracion(t[1],t[3],t.lineno(1),t.lexpos(1))
 
+# ------------------------ FALTA LA 2DA PARTE DE LOCAL Y GLOBAL
+def p_modificar_declaracion(t):
+    '''declaracion  :   LOCAL declaracion
+                    |   VGLOBAL declaracion'''
+    if t.slice[1].type=="LOCAL":
+        t[1].esGlobal = False
+        t[0] = t[1]
+    else:
+        t[1].esGlobal = True
+        t[0] = t[1]
+        
+
 def p_tipodato(t):
     '''tipodato :   DINT64 
                     |   DFLOAT64 

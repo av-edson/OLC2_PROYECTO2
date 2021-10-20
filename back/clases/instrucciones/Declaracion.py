@@ -24,14 +24,18 @@ class Declaracion(Instruccion):
         if self.tipo!=None:
             if self.tipo!=valor.tipo:
                 print("no coincide tipo de valor con declaracion")
+                generador.addComent("Fin Declaracion")
                 return
         nueva = enviroment.getVariable(self.id)
         if nueva == None:
             aux = (valor.tipo==Type.STRING or valor.tipo==Type.STRUCT)
+            glo = aux
+            if self.esGlobal is not None:
+                glo = glo or self.esGlobal
             if not aux:
-                nueva = enviroment.sabeVar(self.id,valor.tipo,aux)
+                nueva = enviroment.sabeVar(self.id,valor.tipo,aux,None,glo)
             elif valor.tipo == Type.STRING:
-                nueva = enviroment.sabeVar(self.id,self.tipo,True)
+                nueva = enviroment.sabeVar(self.id,self.tipo,True,None,glo)
             else:
                 print("declaracion structs y listas falta")
         nueva.tipo = valor.tipo
