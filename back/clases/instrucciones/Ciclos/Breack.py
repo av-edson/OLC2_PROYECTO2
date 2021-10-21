@@ -13,5 +13,5 @@ class Break(Instruccion):
             return
         genAux = Generator()
         generator = genAux.getInstance()
-
+        generator.addComent("brack leido")
         generator.addGoto(enviroment.lbBreack)

@@ -14,6 +14,7 @@ from clases.instrucciones.BloqueInstrucciones import BloqueInstrucciones
 from clases.instrucciones.Ciclos.While import WhileST
 from clases.instrucciones.Ciclos.Breack import Break
 from clases.instrucciones.Ciclos.Continue import Continue
+from clases.instrucciones.Ciclos.ForSt import CicloFor
 
 #------------------ SINTACTICO ---------------------------
 precedence = (
@@ -43,7 +44,8 @@ def p_instruccion(t):
                     |   declaracion PUNTOCOMA
                     |   sentencia_if PUNTOCOMA
                     |   sentencia_while PUNTOCOMA
-                    |   salto_control PUNTOCOMA'''
+                    |   salto_control PUNTOCOMA
+                    |   sentencia_for PUNTOCOMA'''
     t[0]=t[1]
 
 def p_bloque_instrucciones(t):
@@ -222,6 +224,7 @@ def p_modificar_declaracion(t):
     else:
         t[2].esGlobal = True
         t[0] = t[2]
+
 def p_salto_control(t):
     '''salto_control :   CONTINUEST
                     |   BREACKST'''
@@ -229,6 +232,12 @@ def p_salto_control(t):
             t[0] = Continue(t.lineno(1),t.lexpos(0))
     elif t.slice[1].type=="BREACKST":
         t[0] = Break(t.lineno(1),t.lexpos(0))      
+
+def p_sentencia_for(t):
+    '''sentencia_for    :   FORST ID EIN expresion DOSPUNTOS expresion bloque_instrucciones FIN
+                        |   FORST ID EIN expresion bloque_instrucciones FIN'''
+    if len(t)==9:
+        t[0]=CicloFor(t[2],t[4],t[7],t.lineno(1), t.lexpos(1),t[6])
 
 def p_tipodato(t):
     '''tipodato :   DINT64 
@@ -278,6 +287,12 @@ def p_elseIfList(t):
 def p_sentencia_while(t):
     '''sentencia_while  :   WHILEST expresion bloque_instrucciones FIN'''
     t[0] = WhileST(t[2],t[3],t.lineno(1), t.lexpos(1))
+
+def p_sentencia_for(t):
+    '''sentencia_for    :   FORST ID EIN expresion DOSPUNTOS expresion bloque_instrucciones FIN
+                        |   FORST ID EIN expresion bloque_instrucciones FIN'''
+    if len(t)==9:
+        t[0]=CicloFor(t[2],t[4],t[7],t.lineno(1), t.lexpos(1),t[6])
 
 import ply.yacc as yacc
 
