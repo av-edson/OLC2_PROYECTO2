@@ -70,8 +70,7 @@ class Generator:
         return head
 
     def getCodigo(self):
-        #aux = f'{self.getEncabezado()}{self.natives}\n{self.funciones}\nfunc main(){{\n{self.codigo}\n}}'
-        aux = f'{self.getEncabezado()}{self.natives}\nfunc main(){{\n{self.codigo}\n}}'
+        aux = f'{self.getEncabezado()}{self.natives}\n{self.funciones}\nfunc main(){{\n{self.codigo}\n}}'
         return aux
 
     def ingresarCodigo(self, codigo):
@@ -83,8 +82,10 @@ class Generator:
                 self.natives = self.natives + '\t' + codigo
         elif(self.inFunc):
             if(self.funciones == ''):
-                self.funciones = self.ffuncionesuncs + '/*-----FUNCS-----*/\n'
-            self.funciones = self.funciones + '\t' + codigo
+                self.funciones = self.funciones + '/*-----FUNCS-----*/\n'
+                self.funciones = self.funciones + '\t' + codigo
+            else:
+                self.funciones = self.funciones + '\t' + codigo
         else:
             self.codigo = self.codigo + '\t' + codigo
 

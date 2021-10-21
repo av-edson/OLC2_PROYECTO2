@@ -3,6 +3,9 @@ from analizadores.lexer import *
 from clases.abstract.Return import Type
 from clases.expresiones.Literal import ExpresionLiteral
 from clases.expresiones.Aritmetica import OperacionAritmetica, OperacionesAritmeticas
+from clases.instrucciones.Funciones.Funcion import Funcion
+from clases.instrucciones.Funciones.LLamadaFuncion import LLamadaFuncion
+from clases.instrucciones.Funciones.Parametro import Parametro
 from clases.instrucciones.Print import *
 from clases.expresiones.Relacional import *
 from clases.expresiones.Logicas import *
@@ -45,7 +48,9 @@ def p_instruccion(t):
                     |   sentencia_if PUNTOCOMA
                     |   sentencia_while PUNTOCOMA
                     |   salto_control PUNTOCOMA
-                    |   sentencia_for PUNTOCOMA'''
+                    |   sentencia_for PUNTOCOMA
+                    |   declaracion_funcion PUNTOCOMA
+                    |   llamada_funcion PUNTOCOMA'''
     t[0]=t[1]
 
 def p_bloque_instrucciones(t):
@@ -295,6 +300,41 @@ def p_sentencia_for(t):
         t[0]=CicloFor(t[2],t[4],t[7],t.lineno(1), t.lexpos(1),t[6])
     else:
         t[0]=CicloFor(t[2],t[4],t[5],t.lineno(1), t.lexpos(1))
+
+# --------------------------------- FUNCIONES --------------------------------------------
+def p_declaracion_funcion(t):
+    '''declaracion_funcion  :   FUNCION ID PARENTESIS_IZQ params_function PARENTESIS_DER bloque_instrucciones FIN
+                            |   FUNCION ID PARENTESIS_IZQ PARENTESIS_DER bloque_instrucciones FIN''' 
+    if len(t)==7:
+        t[0] = Funcion(t[2],t[5],[],None,t.lineno(1), t.lexpos(1))
+    else:
+        t[0] = Funcion(t[2],t[6],t[4],None,t.lineno(1), t.lexpos(1))
+
+def p_params_funcion(t):
+    '''params_function  :   params_function COMA ID
+                        |   params_function COMA ID DOSPUNTOS DOSPUNTOS tipodato
+                        |   ID
+                        |   ID DOSPUNTOS DOSPUNTOS tipodato'''
+    if len(t)==2:
+        t[0] = [Parametro(t[1],None, t.lineno(1), t.lexpos(1))]
+    elif len(t)==4:
+        t[1].append(Parametro(t[3],None, t.lineno(3), t.lexpos(3)))
+        t[0] = t[1]
+    elif len(t)==5:
+        t[0] = [Parametro(t[1],t[4], t.lineno(1), t.lexpos(1))]
+    else:
+        t[1].append(Parametro(t[3],t[6], t.lineno(3), t.lexpos(3)))
+        t[0] = t[1]
+
+def p_llamada_funcion(t):
+    '''llamada_funcion  :   ID PARENTESIS_IZQ PARENTESIS_DER
+                        |   ID PARENTESIS_IZQ lista_expresiones PARENTESIS_DER
+                        |   FPUSH LNOT PARENTESIS_IZQ lista_expresiones PARENTESIS_DER'''
+    if len(t)==4:
+        t[0] = LLamadaFuncion(t[1],[],t.lineno(1), t.lexpos(1))
+    else:
+        t[0] = LLamadaFuncion(t[1],t[3],t.lineno(1), t.lexpos(1))
+
 
 import ply.yacc as yacc
 

@@ -38,7 +38,7 @@ class Enviroment:
 
     def saveFuncion(self, id, funcion):
         if id in self.functions.keys():
-            print("Función repetida")
+            print("No se admiten funciones repetidas")
         else:
             self.functions[id] = funcion
             
@@ -65,4 +65,5 @@ class Enviroment:
         while entorno != None:
             if id in entorno.functions.keys():
                 return entorno.functions[id]
+            entorno =   entorno.antecesor
         return None
