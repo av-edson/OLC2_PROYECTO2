@@ -11,6 +11,9 @@ from clases.instrucciones.Declaracion import Declaracion
 from clases.expresiones.Nativas import *
 from clases.instrucciones.Condicionales.SentenciaIf import If
 from clases.instrucciones.BloqueInstrucciones import BloqueInstrucciones
+from clases.instrucciones.Ciclos.While import WhileST
+from clases.instrucciones.Ciclos.Breack import Break
+from clases.instrucciones.Ciclos.Continue import Continue
 
 #------------------ SINTACTICO ---------------------------
 precedence = (
@@ -38,7 +41,9 @@ def p_instrucciones_instruccion(t) :
 def p_instruccion(t):
     '''instruccion  :   imprimir PUNTOCOMA
                     |   declaracion PUNTOCOMA
-                    |   sentencia_if PUNTOCOMA'''
+                    |   sentencia_if PUNTOCOMA
+                    |   sentencia_while PUNTOCOMA
+                    |   salto_control PUNTOCOMA'''
     t[0]=t[1]
 
 def p_bloque_instrucciones(t):
@@ -212,12 +217,18 @@ def p_modificar_declaracion(t):
     '''declaracion  :   LOCAL declaracion
                     |   VGLOBAL declaracion'''
     if t.slice[1].type=="LOCAL":
-        t[1].esGlobal = False
-        t[0] = t[1]
+        t[2].esGlobal = False
+        t[0] = t[2]
     else:
-        t[1].esGlobal = True
-        t[0] = t[1]
-        
+        t[2].esGlobal = True
+        t[0] = t[2]
+def p_salto_control(t):
+    '''salto_control :   CONTINUEST
+                    |   BREACKST'''
+    if t.slice[1].type=="CONTINUEST":
+            t[0] = Continue(t.lineno(1),t.lexpos(0))
+    elif t.slice[1].type=="BREACKST":
+        t[0] = Break(t.lineno(1),t.lexpos(0))      
 
 def p_tipodato(t):
     '''tipodato :   DINT64 
@@ -262,6 +273,11 @@ def p_elseIfList(t):
         t[0] = If(t[2], t[3], t.lineno(1), t.lexpos(0), t[5])
     elif len(t) == 5:
         t[0] = If(t[2], t[3], t.lineno(1), t.lexpos(0), t[4])
+
+# ------------------------------------ CICLOS -------------------------------------------
+def p_sentencia_while(t):
+    '''sentencia_while  :   WHILEST expresion bloque_instrucciones FIN'''
+    t[0] = WhileST(t[2],t[3],t.lineno(1), t.lexpos(1))
 
 import ply.yacc as yacc
 

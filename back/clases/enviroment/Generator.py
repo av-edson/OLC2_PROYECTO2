@@ -65,7 +65,7 @@ class Generator:
                 head += self.temps[temp]
                 if temp != (len(self.temps) - 1):
                     head += ","
-            head += " float64\n"
+            head += " float64;\n"
         head += "var P, H float64;\nvar stack [30101999]float64;\nvar heap [30101999]float64;\n\n"
         return head
 
@@ -118,7 +118,7 @@ class Generator:
 
     def addPrint(self, tipo, valor):
         if str(tipo) == "f":
-            self.ingresarCodigo(f'fmt.Printf("%{tipo}", float64({valor}));\n')
+            self.ingresarCodigo(f'fmt.Printf("%{tipo}", {valor});\n')
         else:
             self.ingresarCodigo(f'fmt.Printf("%{tipo}", int({valor}));\n')
 
@@ -250,6 +250,8 @@ class Generator:
         # label salir funcion
         returnLb = self.newLabel()
         finPotencia = self.newLabel()
+        labelError = self.newLabel()
+        labelPotenciaCero = self.newLabel()
 
         contenidoBase = self.addTemporal()
 
@@ -271,15 +273,26 @@ class Generator:
         self.addExpresion(contenidoBase, contenidoBase, "*", tempMulti)
 
         self.putLabel(finPotencia)
+        self.addIf(tempComparacion, '0', '==', labelPotenciaCero)
+        self.addIf(tempComparacion, '0', '<', labelError)
         self.addIf(tempComparacion, '1', '==', returnLb)
         # operaciones matematicas
         self.addExpresion(tempMulti, tempResultado, '+', tempResultado)
         self.addExpresion(contenidoPotencia, 1, '-', contenidoPotencia)
         self.addGoto(finPotencia)
 
+        # por si la potencia fue 0
+        self.generator.putLabel(labelPotenciaCero)
+        self.addExpresion('1','','',tempResultado)
+        self.addGoto(returnLb)
+        # por si es menor la potencia
+        self.putLabel(labelError)
+        self.addExpresion('0','','',tempResultado)
+        self.addGoto(returnLb)
+
         self.putLabel(returnLb)
         # puntero a lugar de return
-        self.addExpresion('P', 2, '-', 'P')
+        self.addExpresion('P', '1', '-', 'P')
         self.setStack('P', tempResultado)
         self.addEndFuncion()
         self.inNativas = False
