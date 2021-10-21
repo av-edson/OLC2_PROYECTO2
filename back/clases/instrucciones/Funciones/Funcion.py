@@ -28,7 +28,10 @@ class Funcion(Instruccion):
 
             generador.addInicioFuncion(self.ide)
             ret = self.instrucciones.compilar(entornoInterno)
-            generador.addGoto(labelReturn)
+
+            if self.tipo is None:
+                generador.addGoto(labelReturn)
+
             generador.putLabel(labelReturn)
             generador.addEndFuncion()
             if ret != None:

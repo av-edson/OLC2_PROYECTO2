@@ -1,5 +1,4 @@
 from clases.abstract.Expresion import Expresion
-from clases.abstract.Instruccion import Instruccion
 from clases.abstract.Return import Return, Type
 from clases.enviroment.Enviroment import Enviroment
 from clases.enviroment.Generator import Generator
@@ -30,16 +29,17 @@ class LLamadaFuncion(Expresion):
                     aux = 0
                     for param in valoresParametro:
                         aux = aux +1
-                        generador.setStack(regreso, param.value)
+                        generador.setStack(regreso, param.valor)
                         if aux != len(valoresParametro):
-                            generador.addExpresion(regreso, regreso, '1', '+')
+                            generador.addExpresion(regreso, '1', '+',regreso)
 
                     generador.newEnv(size)
                     generador.callFun(self.id)
                     generador.getStack(regreso, 'P')
                     generador.retEnv(size)
 
-                    #return Return(regreso, funcion.t, True)
+                    if funcion.tipo != None:
+                        return Return(regreso, funcion.tipo, True)
                 else: return Return()
 
             else:

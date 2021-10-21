@@ -6,6 +6,7 @@ from clases.expresiones.Aritmetica import OperacionAritmetica, OperacionesAritme
 from clases.instrucciones.Funciones.Funcion import Funcion
 from clases.instrucciones.Funciones.LLamadaFuncion import LLamadaFuncion
 from clases.instrucciones.Funciones.Parametro import Parametro
+from clases.instrucciones.Funciones.Return import ReturnST
 from clases.instrucciones.Print import *
 from clases.expresiones.Relacional import *
 from clases.expresiones.Logicas import *
@@ -50,7 +51,8 @@ def p_instruccion(t):
                     |   salto_control PUNTOCOMA
                     |   sentencia_for PUNTOCOMA
                     |   declaracion_funcion PUNTOCOMA
-                    |   llamada_funcion PUNTOCOMA'''
+                    |   llamada_funcion PUNTOCOMA
+                    |   returnST PUNTOCOMA'''
     t[0]=t[1]
 
 def p_bloque_instrucciones(t):
@@ -158,7 +160,8 @@ def p_expresion_funcion_nativa(t):
         t[0]=ExpresionNativa(OpeNativas.LOWER,t[3],t.lineno(1),t.lexpos(1))
 
 def p_final_expresion(t):
-    '''final_expresion  :   PARENTESIS_IZQ expresion PARENTESIS_DER
+    '''final_expresion  :   llamada_funcion
+                        |   PARENTESIS_IZQ expresion PARENTESIS_DER
                         |   ENTERO
                         |   DECIMAL
                         |   CADENA
@@ -182,6 +185,8 @@ def p_final_expresion(t):
             t[0] = ExpresionLiteral(Type.STRING,str(t[1]),t.lineno(1),t.lexpos(0))
         elif t.slice[1].type=="ID":
             t[0] = LLamadaVariable(str(t[1]),t.lineno(1),t.lexpos(0))
+        else: 
+            t[0]=t[1]
     else:
         t[0] = t[2]
 
@@ -304,16 +309,20 @@ def p_sentencia_for(t):
 # --------------------------------- FUNCIONES --------------------------------------------
 def p_declaracion_funcion(t):
     '''declaracion_funcion  :   FUNCION ID PARENTESIS_IZQ params_function PARENTESIS_DER bloque_instrucciones FIN
-                            |   FUNCION ID PARENTESIS_IZQ PARENTESIS_DER bloque_instrucciones FIN''' 
+                            |   FUNCION ID PARENTESIS_IZQ PARENTESIS_DER bloque_instrucciones FIN
+                            |   FUNCION ID PARENTESIS_IZQ params_function PARENTESIS_DER DOSPUNTOS DOSPUNTOS tipodato bloque_instrucciones FIN
+                            |   FUNCION ID PARENTESIS_IZQ PARENTESIS_DER DOSPUNTOS DOSPUNTOS tipodato bloque_instrucciones FIN''' 
     if len(t)==7:
         t[0] = Funcion(t[2],t[5],[],None,t.lineno(1), t.lexpos(1))
-    else:
+    elif len(t)==8:
         t[0] = Funcion(t[2],t[6],t[4],None,t.lineno(1), t.lexpos(1))
+    elif len(t)==11:
+        t[0] = Funcion(t[2],t[9],t[4],t[8],t.lineno(1), t.lexpos(1))
+    else:
+        t[0] = Funcion(t[2],t[8],[],t[7],t.lineno(1), t.lexpos(1))
 
 def p_params_funcion(t):
-    '''params_function  :   params_function COMA ID
-                        |   params_function COMA ID DOSPUNTOS DOSPUNTOS tipodato
-                        |   ID
+    '''params_function  :   params_function COMA ID DOSPUNTOS DOSPUNTOS tipodato
                         |   ID DOSPUNTOS DOSPUNTOS tipodato'''
     if len(t)==2:
         t[0] = [Parametro(t[1],None, t.lineno(1), t.lexpos(1))]
@@ -335,6 +344,13 @@ def p_llamada_funcion(t):
     else:
         t[0] = LLamadaFuncion(t[1],t[3],t.lineno(1), t.lexpos(1))
 
+def p_return(t):
+    '''returnST :   RETURNST expresion
+                    |   RETURNST'''
+    if len(t) == 2:
+        t[0] = ReturnST(None, t.lineno(1), t.lexpos(1))
+    else:
+        t[0] = ReturnST(t[2], t.lineno(1), t.lexpos(1))
 
 import ply.yacc as yacc
 
