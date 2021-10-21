@@ -293,6 +293,8 @@ def p_sentencia_for(t):
                         |   FORST ID EIN expresion bloque_instrucciones FIN'''
     if len(t)==9:
         t[0]=CicloFor(t[2],t[4],t[7],t.lineno(1), t.lexpos(1),t[6])
+    else:
+        t[0]=CicloFor(t[2],t[4],t[5],t.lineno(1), t.lexpos(1))
 
 import ply.yacc as yacc
 

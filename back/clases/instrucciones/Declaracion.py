@@ -10,6 +10,7 @@ class Declaracion(Instruccion):
         self.valor = valor
         self.tipo=tipo
         self.esGlobal=esGlobal
+        self.local = False
     
     def compilar(self, enviroment:Enviroment):
         aux = Generator()
@@ -26,6 +27,7 @@ class Declaracion(Instruccion):
                 print("no coincide tipo de valor con declaracion")
                 generador.addComent("Fin Declaracion")
                 return
+
         nueva = enviroment.getVariable(self.id)
         if nueva == None:
             aux = (valor.tipo==Type.STRING or valor.tipo==Type.STRUCT)
@@ -38,6 +40,7 @@ class Declaracion(Instruccion):
                 nueva = enviroment.sabeVar(self.id,self.tipo,True,None,glo)
             else:
                 print("declaracion structs y listas falta")
+        
         nueva.tipo = valor.tipo
 
         #posicion de la variable
