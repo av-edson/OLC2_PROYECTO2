@@ -9,8 +9,12 @@ class Declaracion(Instruccion):
         self.id = id
         self.valor = valor
         self.tipo=tipo
-        self.esGlobal=esGlobal
-        self.local = False
+        self.esGlobal=None
+        '''
+            global = None -> variable norma
+            global = True -> variable global
+            global = False -> variable local
+        '''
     
     def compilar(self, enviroment:Enviroment):
         aux = Generator()
@@ -27,8 +31,7 @@ class Declaracion(Instruccion):
                 print("no coincide tipo de valor con declaracion")
                 generador.addComent("Fin Declaracion")
                 return
-
-        nueva = enviroment.getVariable(self.id)
+        nueva = enviroment.getVariable(self.id,self.esGlobal)
         if nueva == None:
             aux = (valor.tipo==Type.STRING or valor.tipo==Type.STRUCT)
             glo = aux

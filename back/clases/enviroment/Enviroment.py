@@ -3,6 +3,7 @@ class Enviroment:
     def __init__(self,antecesor,nombre):
         self.antecesor = antecesor
         # NUEVO
+        self.nombre = nombre
         self.size = 0
         self.lbBreack = ''
         self.lbContinue = ''
@@ -41,13 +42,23 @@ class Enviroment:
         else:
             self.functions[id] = funcion
             
-    def getVariable(self, id):
+    def getVariable(self, id,alcance=None):
         entorno = self
-        while entorno != None:
+        if alcance:
+            entorno = self.getGlobal()
             if id in entorno.variables.keys():
                 return entorno.variables[id]
-            entorno = entorno.antecesor
-        return None
+            return None
+        elif alcance is None:
+            while entorno != None:
+                if id in entorno.variables.keys():
+                    return entorno.variables[id]
+                entorno = entorno.antecesor
+            return None
+        elif alcance is False:
+            if id in entorno.variables.keys():
+                    return entorno.variables[id]
+            return None
     
     def getFuncion(self, id):
         entorno = self
