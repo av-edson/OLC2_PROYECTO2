@@ -15,6 +15,7 @@ class ReturnST(Expresion):
 
         aux = Generator()
         generador = aux.getInstance()
+        generador.addComent('RETURN')
         #if self.expresion is None:
         #    ret = Return(0,Type.INT)
         #    return ret
