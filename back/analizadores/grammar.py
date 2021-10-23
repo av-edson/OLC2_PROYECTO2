@@ -3,6 +3,7 @@ from analizadores.lexer import *
 from clases.abstract.Return import Type
 from clases.expresiones.Literal import ExpresionLiteral
 from clases.expresiones.Aritmetica import OperacionAritmetica, OperacionesAritmeticas
+from clases.instrucciones.Arreglos.AccesoArr import AccesoArreglo
 from clases.instrucciones.Funciones.Funcion import Funcion
 from clases.instrucciones.Funciones.LLamadaFuncion import LLamadaFuncion
 from clases.instrucciones.Funciones.Parametro import Parametro
@@ -19,6 +20,7 @@ from clases.instrucciones.Ciclos.While import WhileST
 from clases.instrucciones.Ciclos.Breack import Break
 from clases.instrucciones.Ciclos.Continue import Continue
 from clases.instrucciones.Ciclos.ForSt import CicloFor
+from clases.instrucciones.Arreglos.DeclaracionArreglo import DeclaracionArreglo
 
 #------------------ SINTACTICO ---------------------------
 precedence = (
@@ -168,7 +170,9 @@ def p_final_expresion(t):
                         |   CARACTER
                         |   BOOLEANO
                         |   NULO
-                        |   ID'''
+                        |   ID
+                        |   lista_array
+                        |   accesoArreglo'''
     if len(t) == 2:
         if t.slice[1].type == "ENTERO":
             t[0] = ExpresionLiteral(Type.INT,int(t[1]),t.lineno(1),t.lexpos(0))
@@ -351,6 +355,24 @@ def p_return(t):
         t[0] = ReturnST(None, t.lineno(1), t.lexpos(1))
     else:
         t[0] = ReturnST(t[2], t.lineno(1), t.lexpos(1))
+
+# ---------------------------------- ARREGLOS -----------------------------------------------
+def p_lista_array(t):
+    '''lista_array  : COR_ABRE lista_expresiones COR_CIERRA DOSPUNTOS DOSPUNTOS tipodato'''
+    t[0]=DeclaracionArreglo(t[2],t.lineno(1),t.lexpos(0),t[6])
+
+def p_accesoArreglo(t):
+    '''accesoArreglo    :   ID listaAcceso_arreglo'''
+    t[0]=AccesoArreglo(t[1],t[2],t.lineno(1),t.lexpos(1))
+
+def p_listaAcceso_arreglo(t):
+    '''listaAcceso_arreglo  :   listaAcceso_arreglo COR_ABRE expresion COR_CIERRA
+                            |   COR_ABRE expresion COR_CIERRA'''
+    if len(t)==4:
+        t[0] = [t[2]]
+    else:
+        t[1].append(t[3])
+        t[0]=t[1]
 
 import ply.yacc as yacc
 

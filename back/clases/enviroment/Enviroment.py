@@ -24,14 +24,17 @@ class Enviroment:
             env = env.antecesor
         return env
 
-    def sabeVar(self,id,tipo,inHeap,tipoStrct=None,esGlobal=None):
+    def sabeVar(self,id,tipo,inHeap,tipoStrct=None,esGlobal=None,tipoAux=None):
         globalAux = self.antecesor==None
         if esGlobal is not None:
             globalAux = globalAux or esGlobal
         if id in self.variables.keys():
             print("la variable ya existe")
         else:
-            nuevoSimbolo = Simbolo(id,tipo,self.size,globalAux,inHeap,tipoStrct)
+            if tipoAux != None:
+                nuevoSimbolo = Simbolo(id,tipo,self.size,globalAux,inHeap,tipoAux)
+            else:
+                nuevoSimbolo = Simbolo(id,tipo,self.size,globalAux,inHeap,tipoStrct)
             self.size+=1
             self.variables[id]=nuevoSimbolo
         return self.variables[id]

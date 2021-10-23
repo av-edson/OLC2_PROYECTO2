@@ -46,6 +46,7 @@ class Generator:
         self.diccionarioNativas["igualarString"] = False
         self.diccionarioNativas["upper"]=False
         self.diccionarioNativas["lower"]=False
+        self.diccionarioNativas["boundsError"]=False
 
     # ----------------------  OBTENER STATICO -------------------
     def getInstance(self):
@@ -429,3 +430,26 @@ class Generator:
         self.addEndFuncion()
         self.inNativas = False
 
+    def funcErrorArrego(self):
+        if(self.diccionarioNativas["boundsError"]):
+            return
+        self.diccionarioNativas["boundsError"] = True
+        self.inNativas = True
+
+        self.addInicioFuncion("boundsError")
+        # label salir funcion
+        self.addPrint('c', 66) 
+        self.addPrint('c', 111) 
+        self.addPrint('c', 117) 
+        self.addPrint('c', 110) 
+        self.addPrint('c', 100) 
+        self.addPrint('c', 115) 
+        self.addPrint('c', 69) 
+        self.addPrint('c', 114) 
+        self.addPrint('c', 114) 
+        self.addPrint('c', 111) 
+        self.addPrint('c', 114)
+        self.addPrint('c', 10)
+
+        self.addEndFuncion()
+        self.inNativas = False

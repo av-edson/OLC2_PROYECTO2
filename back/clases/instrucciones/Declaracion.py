@@ -38,9 +38,14 @@ class Declaracion(Instruccion):
             if self.esGlobal is not None:
                 glo = glo or self.esGlobal
             if not aux:
-                nueva = enviroment.sabeVar(self.id,valor.tipo,aux,None,glo)
+                if valor.tipo==Type.ARRAY:
+                    nueva = enviroment.sabeVar(self.id,self.tipo,True,None,glo,valor.tipoAux)
+                else:
+                    nueva = enviroment.sabeVar(self.id,valor.tipo,aux,None,glo)
             elif valor.tipo == Type.STRING:
                 nueva = enviroment.sabeVar(self.id,self.tipo,True,None,glo)
+            elif valor.tipo==Type.ARRAY:
+                nueva = enviroment.sabeVar(self.id,self.tipo,True,None,glo,valor.tipoAux)
             else:
                 print("declaracion structs y listas falta")
         
