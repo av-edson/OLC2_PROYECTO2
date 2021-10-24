@@ -17,6 +17,7 @@ class AccesoArreglo(Expresion):
             aux = Generator()
             generador = aux.getInstance()
             variable = enviroment.getVariable(self.id)
+            generador.addComent("Inicio acceso arreglo")
             if variable is None:
                 print("el arreglo no existe")
                 return Return(0,variable.tipoStruct)
@@ -68,5 +69,13 @@ class AccesoArreglo(Expresion):
         generador.addExpresion('0','','',tempReturn)
         generador.addGoto(salida)
         generador.putLabel(salida)
+
+        if arreglo.tipoStruct == Type.BOOL:
+            ret = Return(tempReturn,arreglo.tipoStruct,True)
+            ret.trueLb = generador.newLabel()
+            ret.falseLb = generador.newLabel()
+            generador.addIf(tempReturn,'1','==',ret.trueLb)
+            generador.addGoto(ret.falseLb) 
+            return ret 
 
         return Return(tempReturn,arreglo.tipoStruct,True)

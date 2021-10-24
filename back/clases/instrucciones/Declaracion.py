@@ -27,8 +27,7 @@ class Declaracion(Instruccion):
         if valor.tipo==Type.UNDEFINED:
             return
         if self.tipo!=None:
-            if valor.tipo==Type.ARRAY:
-                valor.tipoAux = self.tipo
+            if valor.tipo==Type.ARRAY and (valor.tipoAux==self.tipo):
                 self.tipo = Type.ARRAY
             if self.tipo!=valor.tipo:
                 print("no coincide tipo de valor con declaracion")

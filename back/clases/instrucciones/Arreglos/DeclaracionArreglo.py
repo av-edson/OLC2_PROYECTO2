@@ -1,6 +1,7 @@
 from clases.abstract.Expresion import *
 from clases.abstract.Return import *
 from clases.enviroment.Generator import Generator
+from clases.expresiones.Literal import ExpresionLiteral
 
 class DeclaracionArreglo(Expresion):
     def __init__(self,expresiones, line, column,tipoAux=None):
@@ -16,7 +17,15 @@ class DeclaracionArreglo(Expresion):
 
             listaValores = []
             for expre in self.expresiones:
-                ret:Return = expre.compilar(enviroment)
+                if isinstance(expre,ExpresionLiteral):
+                    if expre.tipo==Type.BOOL:
+                        if expre.valor:
+                            ret = Return(1,Type.BOOL)
+                        else:
+                            ret = Return(0,Type.BOOL)
+                    else:
+                        ret:Return = expre.compilar(enviroment)
+                else: ret:Return = expre.compilar(enviroment)
                 if ret is None:
                     print("expresion dentro de arreglo arrojo Nono")
                     generator.addExpresion('H','1','-','H')
@@ -33,11 +42,13 @@ class DeclaracionArreglo(Expresion):
             generator.setHeap('H',self.size)
             generator.nextHeap()
 
+            tipo = None
             for valor in listaValores:
+                tipo = valor.tipo
                 generator.setHeap('H',valor.valor)
                 generator.nextHeap()
 
-            return  Return(tempRetorno,Type.ARRAY,True,self.tipoAux)
+            return  Return(tempRetorno,Type.ARRAY,True,tipo)
 
         except:
             print("Ocurrio un error en la declaracion de arreglo")
