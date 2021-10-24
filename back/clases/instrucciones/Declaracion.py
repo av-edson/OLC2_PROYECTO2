@@ -21,12 +21,15 @@ class Declaracion(Instruccion):
         generador = aux.getInstance()
 
         generador.addComent("Inicio Declaracion")
-        valor = self.valor.compilar(enviroment)
+        valor:Return = self.valor.compilar(enviroment)
 
         # codigo ingresado por mi xd
         if valor.tipo==Type.UNDEFINED:
             return
         if self.tipo!=None:
+            if valor.tipo==Type.ARRAY:
+                valor.tipoAux = self.tipo
+                self.tipo = Type.ARRAY
             if self.tipo!=valor.tipo:
                 print("no coincide tipo de valor con declaracion")
                 generador.addComent("Fin Declaracion")

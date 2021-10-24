@@ -358,8 +358,8 @@ def p_return(t):
 
 # ---------------------------------- ARREGLOS -----------------------------------------------
 def p_lista_array(t):
-    '''lista_array  : COR_ABRE lista_expresiones COR_CIERRA DOSPUNTOS DOSPUNTOS tipodato'''
-    t[0]=DeclaracionArreglo(t[2],t.lineno(1),t.lexpos(0),t[6])
+    '''lista_array  : COR_ABRE lista_expresiones COR_CIERRA'''
+    t[0]=DeclaracionArreglo(t[2],t.lineno(1),t.lexpos(0))
 
 def p_accesoArreglo(t):
     '''accesoArreglo    :   ID listaAcceso_arreglo'''

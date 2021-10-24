@@ -3,7 +3,7 @@ from clases.abstract.Return import *
 from clases.enviroment.Generator import Generator
 
 class DeclaracionArreglo(Expresion):
-    def __init__(self,expresiones, line, column,tipoAux):
+    def __init__(self,expresiones, line, column,tipoAux=None):
         Expresion.__init__(self,line, column)
         self.expresiones = expresiones
         self.size = len(expresiones)
@@ -11,10 +11,10 @@ class DeclaracionArreglo(Expresion):
 
     def compilar(self, enviroment):
         try:
-            listaValores = []
             genAux = Generator()
             generator = genAux.getInstance()
-            
+
+            listaValores = []
             for expre in self.expresiones:
                 ret:Return = expre.compilar(enviroment)
                 if ret is None:
@@ -26,24 +26,16 @@ class DeclaracionArreglo(Expresion):
                     generator.addExpresion('H','1','-','H')
                     return Return()
                 listaValores.append(ret)
-            
+
+
             tempRetorno = generator.addTemporal()
             generator.addExpresion('H','','',tempRetorno)
-
-            self.size = len(listaValores)
             generator.setHeap('H',self.size)
             generator.nextHeap()
 
             for valor in listaValores:
-                if valor.tipo == Type.INT or valor.tipo==Type.FLOAT:
-                    valor:Return = valor
-                    generator.setHeap('H',valor.valor)
-                    generator.nextHeap()
-                elif valor.tipo == Type.ARRAY:
-                    generator.setHeap('H',valor.valor)
-                    generator.nextHeap()
-            #generator.setHeap('H','-1')
-            #generator.nextHeap()
+                generator.setHeap('H',valor.valor)
+                generator.nextHeap()
 
             return  Return(tempRetorno,Type.ARRAY,True,self.tipoAux)
 
