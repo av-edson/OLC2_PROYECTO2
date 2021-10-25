@@ -7,6 +7,7 @@ from clases.instrucciones.Arreglos.AccesoArr import AccesoArreglo
 from clases.instrucciones.Arreglos.ModificarArreglo import ModificarArreglo
 from clases.instrucciones.Funciones.Funcion import Funcion
 from clases.instrucciones.Funciones.LLamadaFuncion import LLamadaFuncion
+from clases.instrucciones.Funciones.Nativas import Nativa, TipoNativa
 from clases.instrucciones.Funciones.Parametro import Parametro
 from clases.instrucciones.Funciones.Return import ReturnST
 from clases.instrucciones.Print import *
@@ -249,11 +250,11 @@ def p_salto_control(t):
     elif t.slice[1].type=="BREACKST":
         t[0] = Break(t.lineno(1),t.lexpos(0))      
 
-def p_sentencia_for(t):
-    '''sentencia_for    :   FORST ID EIN expresion DOSPUNTOS expresion bloque_instrucciones FIN
-                        |   FORST ID EIN expresion bloque_instrucciones FIN'''
-    if len(t)==9:
-        t[0]=CicloFor(t[2],t[4],t[7],t.lineno(1), t.lexpos(1),t[6])
+#def p_sentencia_for(t):
+#    '''sentencia_for    :   FORST ID EIN expresion DOSPUNTOS expresion bloque_instrucciones FIN
+#                        |   FORST ID EIN expresion bloque_instrucciones FIN'''
+#    if len(t)==9:
+#        t[0]=CicloFor(t[2],t[4],t[7],t.lineno(1), t.lexpos(1),t[6])
 
 def p_tipodato(t):
     '''tipodato :   DINT64 
@@ -261,7 +262,8 @@ def p_tipodato(t):
                     |   DBOOL 
                     |   DSTRING 
                     |   DCHAR 
-                    |   STRUCT'''    
+                    |   STRUCT
+                    |   DARRAY'''    
     if t.slice[1].type=='DINT64':
         t[0]=Type.INT
     elif t.slice[1].type=='DFLOAT64':
@@ -274,6 +276,11 @@ def p_tipodato(t):
         t[0]=Type.CHAR
     elif t.slice[1].type=='STRUCT':
         t[0]=Type.STRUCT
+    elif t.slice[1].type=='DARRAY':
+        t[0]=Type.ARRAY
+
+
+
 
 #-------------------------------------- CONDICIONALES ------------------------------------
 
@@ -329,17 +336,20 @@ def p_declaracion_funcion(t):
 
 def p_params_funcion(t):
     '''params_function  :   params_function COMA ID DOSPUNTOS DOSPUNTOS tipodato
-                        |   ID DOSPUNTOS DOSPUNTOS tipodato'''
-    if len(t)==2:
-        t[0] = [Parametro(t[1],None, t.lineno(1), t.lexpos(1))]
-    elif len(t)==4:
-        t[1].append(Parametro(t[3],None, t.lineno(3), t.lexpos(3)))
-        t[0] = t[1]
-    elif len(t)==5:
+                        |   params_function COMA ID DOSPUNTOS DOSPUNTOS tipodato COR_ABRE tipodato COR_CIERRA
+                        |   ID DOSPUNTOS DOSPUNTOS tipodato
+                        |   ID DOSPUNTOS DOSPUNTOS tipodato COR_ABRE tipodato COR_CIERRA'''
+    if len(t)==5:
         t[0] = [Parametro(t[1],t[4], t.lineno(1), t.lexpos(1))]
-    else:
+    elif len(t)==7:
         t[1].append(Parametro(t[3],t[6], t.lineno(3), t.lexpos(3)))
         t[0] = t[1]
+    elif len(t)==8:
+        t[0] = [Parametro(t[1],t[4], t.lineno(3), t.lexpos(3),t[6])]
+    else:
+        t[1].append(Parametro(t[3],t[6], t.lineno(3), t.lexpos(3),t[8]))
+        t[0] = t[1]
+
 
 def p_llamada_funcion(t):
     '''llamada_funcion  :   ID PARENTESIS_IZQ PARENTESIS_DER
@@ -379,6 +389,12 @@ def p_listaAcceso_arreglo(t):
 def p_modificar_arreglo(t):
     '''modificar_arreglo    :   ID listaAcceso_arreglo IGUAL expresion'''
     t[0]=ModificarArreglo(t[1],t[2],t[4],t.lineno(1),t.lexpos(1))
+
+#-------------------------------------------- NATIVAS ---------------------------
+def p_expresion_nativa(t):
+    '''expresion    :   FLENGTH PARENTESIS_IZQ ID PARENTESIS_DER'''
+    if t.slice[1].type=="FLENGTH":
+        t[0]=Nativa(t[3],TipoNativa.LENGTH,t.lineno(1),t.lexpos(1))
 
 import ply.yacc as yacc
 

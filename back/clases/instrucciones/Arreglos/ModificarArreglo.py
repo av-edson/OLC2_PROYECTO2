@@ -37,7 +37,12 @@ class ModificarArreglo(Instruccion):
 
             listado = self.listaAcceso.copy()
             listado.reverse()
-            self.modificarArreglo(variable,posicionArreglo,listado,generador,nuevo)
+            aux = []
+            for expre in listado:
+                ret = expre.compilar(enviroment)
+                aux.append(ret)
+            
+            self.modificarArreglo(variable,posicionArreglo,aux,generador,nuevo)
 
             if variable.tipoStruct==Type.STRING:
                 generador.addExpresion(returnAux,'','','H')
@@ -46,7 +51,7 @@ class ModificarArreglo(Instruccion):
             return
 
     def modificarArreglo(self,arreglo:Simbolo,posOnH,expresiones,generador:Generator,nuevo:Return):
-        expreActual:Return = expresiones.pop()
+        expreActual = expresiones.pop()
         if expreActual.tipo!=Type.INT:
                 print("Expresion de acceso a arreglo invalida")
                 return Return(0,arreglo.tipoStruct)

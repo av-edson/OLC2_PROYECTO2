@@ -18,6 +18,7 @@ reservadas = {
     'Bool':'DBOOL',
     'Char':'DCHAR',
     'String':'DSTRING',
+    'Array':'DARRAY',
     'nothing':'NULO',
     'true':'BOOLEANO',
     'false':'BOOLEANO',

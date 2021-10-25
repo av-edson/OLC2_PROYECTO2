@@ -24,7 +24,10 @@ class Funcion(Instruccion):
 
             for parametro in self.parametros:
                 parametro:Parametro = parametro
-                entornoInterno.sabeVar(parametro.id,parametro.tipo,(parametro.tipo==Type.STRING or parametro.tipo==Type.STRUCT))
+                if parametro.tipoAux != None:
+                    entornoInterno.sabeVar(parametro.id,parametro.tipo,(parametro.tipo==Type.STRING or parametro.tipo==Type.STRUCT or parametro.tipo==Type.ARRAY),None,None,parametro.tipoAux)
+                else:
+                    entornoInterno.sabeVar(parametro.id,parametro.tipo,(parametro.tipo==Type.STRING or parametro.tipo==Type.STRUCT or parametro.tipo==Type.ARRAY))
 
             generador.addInicioFuncion(self.ide)
             ret = self.instrucciones.compilar(entornoInterno)

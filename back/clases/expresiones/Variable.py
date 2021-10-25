@@ -72,7 +72,8 @@ class LLamadaVariable(Expresion):
 
                 generador.addComent("Fin llamada Variable")
                 return Return(ret,Type.STRING,True)
-
+            elif variable.tipo==Type.ARRAY:
+                return Return(temp,variable.tipo,True)
             return Return()
         except:
             print('----Error al ejecutar funcion nativa')
