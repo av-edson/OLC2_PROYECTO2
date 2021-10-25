@@ -4,6 +4,7 @@ from clases.abstract.Return import Type
 from clases.expresiones.Literal import ExpresionLiteral
 from clases.expresiones.Aritmetica import OperacionAritmetica, OperacionesAritmeticas
 from clases.instrucciones.Arreglos.AccesoArr import AccesoArreglo
+from clases.instrucciones.Arreglos.ModificarArreglo import ModificarArreglo
 from clases.instrucciones.Funciones.Funcion import Funcion
 from clases.instrucciones.Funciones.LLamadaFuncion import LLamadaFuncion
 from clases.instrucciones.Funciones.Parametro import Parametro
@@ -54,7 +55,8 @@ def p_instruccion(t):
                     |   sentencia_for PUNTOCOMA
                     |   declaracion_funcion PUNTOCOMA
                     |   llamada_funcion PUNTOCOMA
-                    |   returnST PUNTOCOMA'''
+                    |   returnST PUNTOCOMA
+                    |   modificar_arreglo PUNTOCOMA'''
     t[0]=t[1]
 
 def p_bloque_instrucciones(t):
@@ -373,6 +375,10 @@ def p_listaAcceso_arreglo(t):
     else:
         t[1].append(t[3])
         t[0]=t[1]
+
+def p_modificar_arreglo(t):
+    '''modificar_arreglo    :   ID listaAcceso_arreglo IGUAL expresion'''
+    t[0]=ModificarArreglo(t[1],t[2],t[4],t.lineno(1),t.lexpos(1))
 
 import ply.yacc as yacc
 

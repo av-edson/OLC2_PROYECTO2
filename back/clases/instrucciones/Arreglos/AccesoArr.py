@@ -1,5 +1,3 @@
-from os import O_TRUNC
-from typing import List
 from clases.abstract.Expresion import *
 from clases.abstract.Return import *
 from clases.enviroment.Enviroment import Enviroment
@@ -37,7 +35,7 @@ class AccesoArreglo(Expresion):
             print("Error inesperado en acceso arreglo")
             return Return()
     
-    def accesoArreglo(self,arreglo:Simbolo,expresiones:List,generador:Generator):
+    def accesoArreglo(self,arreglo:Simbolo,expresiones,generador:Generator):
         expreActual:Return = expresiones.pop()
         if expreActual.tipo!=Type.INT:
                 print("Expresion de acceso a arreglo invalida")
@@ -94,7 +92,7 @@ class AccesoArreglo(Expresion):
 
         return Return(tempReturn,arreglo.tipoStruct,True)
 
-    def buscarEnArreglo(self,arreglo:Simbolo,posOnH,expresiones:List,generador:Generator):
+    def buscarEnArreglo(self,arreglo:Simbolo,posOnH,expresiones,generador:Generator):
         expreActual:Return = expresiones.pop()
         if expreActual.tipo!=Type.INT:
                 print("Expresion de acceso a arreglo invalida")
