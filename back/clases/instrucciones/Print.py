@@ -3,6 +3,8 @@ from clases.abstract.Return import *
 from clases.abstract.Instruccion import Instruccion
 from enum import Enum
 
+from clases.enviroment.auxGenerador import auxGenerador
+
 class TipoImpresion(Enum):
     PRINT=0
     PRINTLN=1
@@ -59,6 +61,15 @@ class Imprimir(Instruccion):
             generador.addExpresion(expre.valor,'','','H')
         elif expre.tipo==Type.CHAR:
             generador.addPrint('c',expre.valor)
+        elif expre.tipo==Type.ARRAY:
+            regreso=generador.addTemporal()
+            generador.addExpresion('H','','',regreso)
+            generador.addExpresion('H','1','+','H')
+            generador.setHeap('H',expre.valor)
+            aux = auxGenerador()
+            aux.PrintArray()
+            generador.callFun("printArray")
+            generador.addExpresion(regreso,'','','H')
 
         #generador.addPrint("c",10)
         #generador.addComent("Fin Impresion")

@@ -47,6 +47,7 @@ class Generator:
         self.diccionarioNativas["upper"]=False
         self.diccionarioNativas["lower"]=False
         self.diccionarioNativas["boundsError"]=False
+        self.diccionarioNativas["printArray"]=False
 
     # ----------------------  OBTENER STATICO -------------------
     def getInstance(self):
@@ -254,6 +255,7 @@ class Generator:
         finPotencia = self.newLabel()
         labelError = self.newLabel()
         labelPotenciaCero = self.newLabel()
+        label1 = self.newLabel()
 
         contenidoBase = self.addTemporal()
 
@@ -271,6 +273,8 @@ class Generator:
         tempMulti = self.addTemporal()
         tempResultado = self.addTemporal()
 
+        # si es uno
+        self.addIf(contenidoPotencia,'1','==',label1)
         # valor que se multiplica
         self.addExpresion(contenidoBase, contenidoBase, "*", tempMulti)
 
@@ -290,6 +294,10 @@ class Generator:
         # por si es menor la potencia
         self.putLabel(labelError)
         self.addExpresion('0','','',tempResultado)
+        self.addGoto(returnLb)
+
+        self.putLabel(label1)
+        self.addExpresion(contenidoBase,'','',tempResultado)
         self.addGoto(returnLb)
 
         self.putLabel(returnLb)
