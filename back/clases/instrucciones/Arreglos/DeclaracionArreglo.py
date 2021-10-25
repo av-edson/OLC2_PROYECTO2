@@ -44,7 +44,10 @@ class DeclaracionArreglo(Expresion):
 
             tipo = None
             for valor in listaValores:
-                tipo = valor.tipo
+                if valor.tipo==Type.ARRAY:
+                    tipo = valor.tipoAux
+                else:
+                    tipo = valor.tipo
                 generator.setHeap('H',valor.valor)
                 generator.nextHeap()
 
