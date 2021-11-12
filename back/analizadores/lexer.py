@@ -57,6 +57,8 @@ tokens = [
     'PARENTESIS_DER',
     'COR_ABRE',
     'COR_CIERRA',
+    'LLA_ABRE',
+    'LLA_CIERRA',
     # ARITMETICAS
     'SUMA',
     'RESTA',
@@ -90,7 +92,8 @@ tokens = [
 ] + list(reservadas.values())
 
 # Tokens
-
+t_LLA_CIERRA = r'\}'
+t_LLA_ABRE = r'\{'
 t_PARENTESIS_IZQ = r'\('
 t_PARENTESIS_DER = r'\)'
 t_SUMA = r'\+'

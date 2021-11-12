@@ -39,6 +39,7 @@ class Generator:
         self.diccionarioNativas = {}
         self.diccionarioNativas["mathError"] = False
         self.diccionarioNativas["printString"] = False
+        self.diccionarioNativas["printString2"] = False
         self.diccionarioNativas["mathMod"] = False
         self.diccionarioNativas["potencia"] = False
         self.diccionarioNativas["concatenarString"] = False
@@ -48,6 +49,8 @@ class Generator:
         self.diccionarioNativas["lower"]=False
         self.diccionarioNativas["boundsError"]=False
         self.diccionarioNativas["printArray"]=False
+        self.diccionarioNativas["printArrayString"]=False
+
 
     # ----------------------  OBTENER STATICO -------------------
     def getInstance(self):
@@ -459,5 +462,27 @@ class Generator:
         self.addPrint('c', 114)
         self.addPrint('c', 10)
 
+        self.addEndFuncion()
+        self.inNativas = False
+
+    def funPrintString2(self):
+        if(self.diccionarioNativas["printString2"]):
+            return
+        self.diccionarioNativas["printString2"] = True
+        self.inNativas = True
+        self.addInicioFuncion("printString2")
+
+        returnLb = self.newLabel()
+        compareLb = self.newLabel()
+        tempH = self.addTemporal()
+        self.addExpresion('H','','',tempH)
+        tempC = self.addTemporal()
+        self.putLabel(compareLb)
+        self.getHeap(tempC, tempH)
+        self.addIf(tempC, '-1', '==', returnLb)
+        self.addPrint('c', tempC)
+        self.addExpresion(tempH, '1', '+', tempH)
+        self.addGoto(compareLb)
+        self.putLabel(returnLb)
         self.addEndFuncion()
         self.inNativas = False

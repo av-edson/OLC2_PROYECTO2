@@ -336,9 +336,9 @@ def p_declaracion_funcion(t):
 
 def p_params_funcion(t):
     '''params_function  :   params_function COMA ID DOSPUNTOS DOSPUNTOS tipodato
-                        |   params_function COMA ID DOSPUNTOS DOSPUNTOS tipodato COR_ABRE tipodato COR_CIERRA
+                        |   params_function COMA ID DOSPUNTOS DOSPUNTOS tipodato LLA_ABRE tipodato LLA_CIERRA
                         |   ID DOSPUNTOS DOSPUNTOS tipodato
-                        |   ID DOSPUNTOS DOSPUNTOS tipodato COR_ABRE tipodato COR_CIERRA'''
+                        |   ID DOSPUNTOS DOSPUNTOS tipodato LLA_ABRE tipodato LLA_CIERRA'''
     if len(t)==5:
         t[0] = [Parametro(t[1],t[4], t.lineno(1), t.lexpos(1))]
     elif len(t)==7:

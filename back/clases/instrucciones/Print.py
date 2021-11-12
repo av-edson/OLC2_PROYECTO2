@@ -67,8 +67,12 @@ class Imprimir(Instruccion):
             generador.addExpresion('H','1','+','H')
             generador.setHeap('H',expre.valor)
             aux = auxGenerador()
-            aux.PrintArray()
-            generador.callFun("printArray")
+            if expre.tipoAux==Type.STRING:
+                aux.PrintArrayString()
+                generador.callFun("printArrayString")
+            else:
+                aux.PrintArray()
+                generador.callFun("printArray")
             generador.addExpresion(regreso,'','','H')
 
         #generador.addPrint("c",10)

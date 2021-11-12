@@ -172,3 +172,38 @@ class auxGenerador:
         self.ge.putLabel(labelReturn)
         self.ge.addEndFuncion()
         self.ge.inNativas = False
+    
+    def PrintArrayString(self):
+        if self.ge.diccionarioNativas["printArrayString"]:
+            return
+        self.ge.diccionarioNativas["printArrayString"]=True
+        self.ge.inNativas=True
+
+        self.ge.addInicioFuncion("printArrayString")
+        labelReturn=self.ge.newLabel()
+        Pe = self.ge.addTemporal()      # a1
+        posHeap = self.ge.addTemporal() #a2
+        self.ge.addExpresion('H','','',Pe)  #a1=P
+        self.ge.getHeap(posHeap,Pe)    #a2 = stack[int(a1)]
+        tamano = self.ge.addTemporal()
+        indice = self.ge.addTemporal()
+        self.ge.getHeap(tamano,posHeap) #a3 = heap[int(a2)]
+        self.ge.addExpresion('1','','',indice)
+        ciclo = self.ge.newLabel()
+        
+        self.ge.putLabel(ciclo)
+        self.ge.addExpresion(posHeap,'1','+',posHeap)
+        obtenido=self.ge.addTemporal()
+        self.ge.getHeap(obtenido,posHeap)
+        self.ge.addIf(indice,tamano,'>',labelReturn)
+        # -------------------------------------
+        self.ge.addExpresion(obtenido,'','','H')
+        self.ge.callFun("printString2")
+        self.ge.addPrint("c",45)
+        self.ge.addExpresion(indice,'1','+',indice)
+        self.ge.addGoto(ciclo)
+        self.ge.putLabel(labelReturn)
+        self.ge.addExpresion(Pe,'','','H')
+        self.ge.addEndFuncion()
+        self.ge.inNativas = False
+        self.ge.funPrintString2()
