@@ -3,7 +3,6 @@ from clases.abstract.Return import Return, Type
 from clases.enviroment.auxGenerador import auxGenerador
 from clases.enviroment.Generator import Generator
 from enum import Enum
-from math import cos,sin,tan,sqrt,log,log10
 
 class OpeNativas(Enum):
     LOGCOMUN=0

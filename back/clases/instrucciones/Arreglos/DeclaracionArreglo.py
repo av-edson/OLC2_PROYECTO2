@@ -9,6 +9,7 @@ class DeclaracionArreglo(Expresion):
         self.expresiones = expresiones
         self.size = len(expresiones)
         self.tipoAux = tipoAux
+        self.primitivo = None
 
     def compilar(self, enviroment):
         try:
@@ -25,7 +26,8 @@ class DeclaracionArreglo(Expresion):
                             ret = Return(0,Type.BOOL)
                     else:
                         ret:Return = expre.compilar(enviroment)
-                else: ret:Return = expre.compilar(enviroment)
+                else: 
+                    ret:Return = expre.compilar(enviroment)
                 if ret is None:
                     print("expresion dentro de arreglo arrojo Nono")
                     generator.addExpresion('H','1','-','H')
@@ -44,14 +46,21 @@ class DeclaracionArreglo(Expresion):
 
             tipo = None
             for valor in listaValores:
-                if valor.tipo==Type.ARRAY:
-                    tipo = valor.tipoAux
-                else:
-                    tipo = valor.tipo
+                #if valor.tipo==Type.ARRAY:
+                #    tipo = valor.tipoAux
+                #else:)
+                if valor.tipoAux!='':
+                    self.primitivo=valor.tipoAux
+                else: self.primitivo = valor.tipo
+                tipo = valor.tipo
                 generator.setHeap('H',valor.valor)
                 generator.nextHeap()
 
-            return  Return(tempRetorno,Type.ARRAY,True,tipo)
+            ret = Return(tempRetorno,Type.ARRAY,True,tipo)
+            ret.primitivo=self.primitivo
+            return ret
 
         except:
             print("Ocurrio un error en la declaracion de arreglo")
+    
+

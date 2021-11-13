@@ -9,6 +9,7 @@ class AccesoArreglo(Expresion):
         Expresion.__init__(self,line, column)
         self.id = id
         self.acceso = expre
+        self.dim=0
 
     def compilar(self, enviroment:Enviroment):
         try:
@@ -36,6 +37,7 @@ class AccesoArreglo(Expresion):
             return Return()
     
     def accesoArreglo(self,arreglo:Simbolo,expresiones,generador:Generator):
+        self.dim=1
         expreActual:Return = expresiones.pop()
         if expreActual.tipo!=Type.INT:
                 print("Expresion de acceso a arreglo invalida")
@@ -93,6 +95,7 @@ class AccesoArreglo(Expresion):
         return Return(tempReturn,arreglo.tipoStruct,True)
 
     def buscarEnArreglo(self,arreglo:Simbolo,posOnH,expresiones,generador:Generator):
+        self.dim=self.dim+1
         expreActual:Return = expresiones.pop()
         if expreActual.tipo!=Type.INT:
                 print("Expresion de acceso a arreglo invalida")
@@ -100,6 +103,10 @@ class AccesoArreglo(Expresion):
         
         posicionArreglo = generador.addTemporal()
         generador.addExpresion(posOnH,'','',posicionArreglo)
+
+        
+        returnAux = generador.addTemporal()
+        generador.addExpresion('H','','',returnAux)
 
         tempTamano = generador.addTemporal()
         labelContinue = generador.newLabel()
@@ -127,13 +134,18 @@ class AccesoArreglo(Expresion):
         if len(expresiones) !=0:
             return self.buscarEnArreglo(arreglo,tempReturn,expresiones,generador)
 
-        if arreglo.tipoStruct == Type.BOOL:
-            ret = Return(tempReturn,arreglo.tipoStruct,True)
+        if arreglo.primitivo == Type.BOOL and self.dim==2:
+            ret = Return(tempReturn,arreglo.primitivo,True)
             ret.trueLb = generador.newLabel()
             ret.falseLb = generador.newLabel()
             generador.addIf(tempReturn,'1','==',ret.trueLb)
             generador.addGoto(ret.falseLb) 
             return ret 
-        
+        elif arreglo.primitivo==Type.STRING and self.dim==2:
+            generador.addExpresion(indiceAcceso,'','','H')
+            generador.addExpresion('H','2','+','H')
+            return Return(returnAux,arreglo.primitivo,True)
+        elif self.dim==2: return Return(tempReturn,arreglo.primitivo,True)
+            
 
         return Return(tempReturn,arreglo.tipoStruct,True)

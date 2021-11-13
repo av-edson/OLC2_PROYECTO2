@@ -1,4 +1,7 @@
+import time
+from clases.enviroment.Generator import Generator
 from clases.enviroment.Simbol import *
+from clases.error import Error
 class Enviroment:
     def __init__(self,antecesor,nombre):
         self.antecesor = antecesor
@@ -29,10 +32,15 @@ class Enviroment:
         if esGlobal is not None:
             globalAux = globalAux or esGlobal
         if id in self.variables.keys():
-            print("la variable ya existe")
+            genAux = Generator()
+            generador = genAux.getInstance()
+            generador.listaErrores.append(Error("La variable "+str(id)+" ya existe",0,0,str(time.strftime("%c")) ))
         else:
             if tipoAux != None:
-                nuevoSimbolo = Simbolo(id,tipo,self.size,globalAux,inHeap,tipoAux)
+                if tipoAux==Type.ARRAY:
+                    nuevoSimbolo = Simbolo(id,tipo,self.size,globalAux,inHeap,tipoAux,tipoStrct)
+                else:
+                    nuevoSimbolo = Simbolo(id,tipo,self.size,globalAux,inHeap,tipoAux)
             else:
                 nuevoSimbolo = Simbolo(id,tipo,self.size,globalAux,inHeap,tipoStrct)
             self.size+=1
@@ -41,7 +49,10 @@ class Enviroment:
 
     def saveFuncion(self, id, funcion):
         if id in self.functions.keys():
-            print("No se admiten funciones repetidas")
+            genAux = Generator()
+            print("aca")
+            generador = genAux.getInstance()
+            generador.listaErrores.append(Error("No se admiten funciones repetidas",0,0,str(time.strftime("%c")) ))
         else:
             self.functions[id] = funcion
             
@@ -63,6 +74,12 @@ class Enviroment:
                     return entorno.variables[id]
             return None
     
+    def saveStruct(self, id, struct):
+        if id in self.structs.keys():
+            print("Struct repetido")
+        else:
+            self.structs[id] = struct
+
     def getFuncion(self, id):
         entorno = self
         while entorno != None:

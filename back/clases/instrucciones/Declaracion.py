@@ -33,6 +33,8 @@ class Declaracion(Instruccion):
                 print("no coincide tipo de valor con declaracion")
                 generador.addComent("Fin Declaracion")
                 return
+        else:
+            self.tipo = valor.tipo
         nueva = enviroment.getVariable(self.id,self.esGlobal)
         if nueva == None:
             aux = (valor.tipo==Type.STRING or valor.tipo==Type.STRUCT)
@@ -41,13 +43,13 @@ class Declaracion(Instruccion):
                 glo = glo or self.esGlobal
             if not aux:
                 if valor.tipo==Type.ARRAY:
-                    nueva = enviroment.sabeVar(self.id,self.tipo,True,None,glo,valor.tipoAux)
+                    nueva = enviroment.sabeVar(self.id,self.tipo,True,valor.primitivo,glo,valor.tipoAux)
                 else:
                     nueva = enviroment.sabeVar(self.id,valor.tipo,aux,None,glo)
             elif valor.tipo == Type.STRING:
                 nueva = enviroment.sabeVar(self.id,self.tipo,True,None,glo)
             elif valor.tipo==Type.ARRAY:
-                nueva = enviroment.sabeVar(self.id,self.tipo,True,None,glo,valor.tipoAux)
+                nueva = enviroment.sabeVar(self.id,self.tipo,True,valor.primitivo,glo,valor.tipoAux)
             else:
                 print("declaracion structs y listas falta")
         

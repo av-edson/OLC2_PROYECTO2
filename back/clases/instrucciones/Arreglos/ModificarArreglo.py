@@ -21,7 +21,8 @@ class ModificarArreglo(Instruccion):
                 print("Arreglo a modificar no existe")
                 return
             if variable.tipoStruct != nuevo.tipo:
-                print("Tipo de dato no coincide con el del arreglo")
+                if variable.primitivo!=nuevo.tipo:
+                    print("Tipo de dato no coincide con el del arreglo")
                 return
 
             posicionArreglo = generador.addTemporal()

@@ -141,6 +141,8 @@ class OperacionAritmetica(Expresion):
         else:
             if izq.esTemp or der.esTemp:
                 return Return(0,Type.FLOAT,True)
+            elif not der.esTemp and der.valor==0:
+                return Return(0,Type.INT,True)
             v = izq.valor/der.valor
             formato = re.compile(r'^\-?[1-9][0-9]*$')
             if re.match(formato,str(v)):

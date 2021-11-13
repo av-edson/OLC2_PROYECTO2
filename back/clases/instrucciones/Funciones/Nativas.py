@@ -19,6 +19,7 @@ class Nativa(Expresion):
 
     def compilar(self, enviroment):
         if self.tipo==TipoNativa.LENGTH: return self.getSize(self.parametros,enviroment)
+        elif self.tipo==TipoNativa.TRUNC: return self.funTrunc(self.parametros,enviroment)
     
     def getSize(self,id,enviroment:Enviroment):
         variable = enviroment.getVariable(id)
@@ -44,5 +45,21 @@ class Nativa(Expresion):
 
         return Return(tamano,Type.INT,True)
 
-    
+    def funTrunc(self,id,envitoment:Enviroment):
+        aux = Generator()
+        generador = aux.getInstance()
+
+        expre:Return = id.compilar(envitoment)
+        if not ( expre.tipo==Type.INT or expre.tipo==Type.FLOAT): 
+            print("expresion no admitida para modulo")
+            return Return()
+        aux = generador.addTemporal()
+        regreso = generador.addTemporal()
+        generador.addExpresion(expre.valor,'','',aux)
+        generador.activarModulo(aux,'1',aux)
+        generador.addExpresion(expre.valor,aux,'-',regreso)
+        expre.tipo=Type.INT
+        expre.valor=regreso
+        return expre
+
 

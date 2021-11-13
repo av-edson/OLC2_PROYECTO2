@@ -1,5 +1,3 @@
-from .Enviroment import Enviroment
-
 
 class Generator:
     generator = None
@@ -19,6 +17,7 @@ class Generator:
         self.printString = False
         self.diccionarioNativas = {}
         self.limpiarDirectorioNativas()
+        self.listaErrores=[]
 
     def limpiarTodo(self):
         self.TempCont = 0
@@ -31,6 +30,7 @@ class Generator:
         self.inNativas = False
 
         self.temps = []
+        self.listaErrores=[]
 
         Generator.generator = Generator()
         self.limpiarDirectorioNativas()
@@ -275,18 +275,19 @@ class Generator:
         tempComparacion = contenidoPotencia
         tempMulti = self.addTemporal()
         tempResultado = self.addTemporal()
+        self.addExpresion(contenidoBase,'','',tempResultado)
 
         # si es uno
         self.addIf(contenidoPotencia,'1','==',label1)
         # valor que se multiplica
-        self.addExpresion(contenidoBase, contenidoBase, "*", tempMulti)
+        self.addExpresion(contenidoBase, "", "", tempMulti)
 
         self.putLabel(finPotencia)
         self.addIf(tempComparacion, '0', '==', labelPotenciaCero)
         self.addIf(tempComparacion, '0', '<', labelError)
         self.addIf(tempComparacion, '1', '==', returnLb)
         # operaciones matematicas
-        self.addExpresion(tempMulti, tempResultado, '+', tempResultado)
+        self.addExpresion(tempMulti, tempResultado, '*', tempResultado)
         self.addExpresion(contenidoPotencia, 1, '-', contenidoPotencia)
         self.addGoto(finPotencia)
 

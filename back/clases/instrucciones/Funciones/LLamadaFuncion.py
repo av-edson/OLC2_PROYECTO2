@@ -43,7 +43,7 @@ class LLamadaFuncion(Expresion):
                 else: return Return()
 
             else:
-                print("No se ha definico la funcon")
+                print("No se ha definico la funcon "+str(self.id))
                 return Return()
         except:
             print("Ocurrio un error al llamar a la funcion "+str(self.id))

@@ -1,6 +1,7 @@
 
 from analizadores.lexer import *
 from clases.abstract.Return import Type
+from clases.error import Error
 from clases.expresiones.Literal import ExpresionLiteral
 from clases.expresiones.Aritmetica import OperacionAritmetica, OperacionesAritmeticas
 from clases.instrucciones.Arreglos.AccesoArr import AccesoArreglo
@@ -23,6 +24,10 @@ from clases.instrucciones.Ciclos.Breack import Break
 from clases.instrucciones.Ciclos.Continue import Continue
 from clases.instrucciones.Ciclos.ForSt import CicloFor
 from clases.instrucciones.Arreglos.DeclaracionArreglo import DeclaracionArreglo
+from clases.instrucciones.Structs.AtributoSrt import AtrStruct
+from clases.instrucciones.Structs.CreateStruct import CreateStruct
+from clases.instrucciones.Structs.DeclararStr import DeclararStr
+from clases.instrucciones.Structs.DeclararStruct import DeclararStruct
 
 #------------------ SINTACTICO ---------------------------
 precedence = (
@@ -57,7 +62,9 @@ def p_instruccion(t):
                     |   declaracion_funcion PUNTOCOMA
                     |   llamada_funcion PUNTOCOMA
                     |   returnST PUNTOCOMA
-                    |   modificar_arreglo PUNTOCOMA'''
+                    |   modificar_arreglo PUNTOCOMA
+                    |   crearStruct PUNTOCOMA
+                    |   declararStruct PUNTOCOMA'''
     t[0]=t[1]
 
 def p_bloque_instrucciones(t):
@@ -66,8 +73,7 @@ def p_bloque_instrucciones(t):
 
 def p_instruccion_error(t):
     '''instruccion  :   error PUNTOCOMA'''
-    #errores.append(Error("Error sintactico en: '"+str(t[1].value)+"'",str(t.lineno(1)), str(t.lexpos(1)),str(time.strftime("%c"))))
-    print('error en gramatica')
+    errores.append(Error("Error sintactico en: '"+str(t[1].value)+"'",str(t.lineno(1)), str(t.lexpos(1)),str(time.strftime("%c")) ))
     t[0]=None
 
 ## -------------------------------- EXPRESIONES --------------------------
@@ -355,7 +361,9 @@ def p_llamada_funcion(t):
     '''llamada_funcion  :   ID PARENTESIS_IZQ PARENTESIS_DER
                         |   ID PARENTESIS_IZQ lista_expresiones PARENTESIS_DER
                         |   FPUSH LNOT PARENTESIS_IZQ lista_expresiones PARENTESIS_DER'''
-    if len(t)==4:
+    if str(t[1]) in listaStructs:
+        t[0]=DeclararStruct(t[1],t[3],t.lineno(1), t.lexpos(1))
+    elif len(t)==4:
         t[0] = LLamadaFuncion(t[1],[],t.lineno(1), t.lexpos(1))
     else:
         t[0] = LLamadaFuncion(t[1],t[3],t.lineno(1), t.lexpos(1))
@@ -392,9 +400,35 @@ def p_modificar_arreglo(t):
 
 #-------------------------------------------- NATIVAS ---------------------------
 def p_expresion_nativa(t):
-    '''expresion    :   FLENGTH PARENTESIS_IZQ ID PARENTESIS_DER'''
+    '''expresion    :   FLENGTH PARENTESIS_IZQ ID PARENTESIS_DER
+                    |   FTRUNC PARENTESIS_IZQ expresion PARENTESIS_DER'''
     if t.slice[1].type=="FLENGTH":
         t[0]=Nativa(t[3],TipoNativa.LENGTH,t.lineno(1),t.lexpos(1))
+    elif t.slice[1].type=="FTRUNC":
+        t[0]=Nativa(t[3],TipoNativa.TRUNC,t.lineno(1),t.lexpos(1))
+
+def p_declareStruct(t):
+    'declararStruct : ID DOSPUNTOS DOSPUNTOS ID'
+    t[0] = DeclararStr(t[1], t[4], t.lineno(1), t.lexpos(1))
+
+def p_createStruct(t):
+    '''crearStruct : STRUCT ID atributos FIN
+                    |   MUTABLE STRUCT ID atributos FIN'''
+    if len(t) == 6: 
+        t[0] = CreateStruct(t[2], t[3], t.lineno(1), t.lexpos(1),True)
+        listaStructs.append(str(t[2]))
+    else : 
+        t[0] = CreateStruct(t[2], t[3], t.lineno(1), t.lexpos(1))
+        listaStructs.append(str(t[1]))
+
+def p_attList(t):
+    '''atributos :  atributos  ID DOSPUNTOS DOSPUNTOS tipodato PUNTOCOMA
+                | ID DOSPUNTOS DOSPUNTOS tipodato PUNTOCOMA'''
+    if len(t) == 6:
+        t[0] = [AtrStruct(t[1], t[4], t.lineno(1), t.lexpos(1))]
+    else:
+        t[1].append(AtrStruct(t[3], t[6], t.lineno(2), t.lexpos(2)))
+        t[0] = t[1]
 
 import ply.yacc as yacc
 

@@ -21,6 +21,7 @@ class Return:
         self.valor=value
         self.tipo=tipo
         self.tipoAux = tipoAux
+        self.primitivo=None
         self.esTemp = esTemp
         self.trueLb = ''
         self.falseLb = ''
