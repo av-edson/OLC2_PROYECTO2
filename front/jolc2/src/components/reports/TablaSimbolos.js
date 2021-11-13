@@ -9,6 +9,7 @@ export class TablaSimbolos extends React.Component{
     //console.log(this.props.listaErrores)
     var aux=[]
     var i=1
+    
     this.props.listaSimbolos.forEach(element => {
       element["num"] = i
       i++

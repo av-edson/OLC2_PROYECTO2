@@ -11,7 +11,9 @@ export class Compiler extends React.Component{
     state={
         value:'',
         estado:true,
-        code:''
+        code:'',
+        simbolos:[],
+        errores:[]
     }
 
     onChange = (editor, data, value) => {
@@ -19,6 +21,8 @@ export class Compiler extends React.Component{
         code:'',
         console:'',
         estado:true,
+        simbolos:[],
+        errores:[]
       });
     };
     render(){
@@ -43,14 +47,14 @@ export class Compiler extends React.Component{
                 <div className="editor">
                 <h3>Salida de Codigo</h3>
                   <CodeMirror
-                    value={this.state.code}
+                    value={this.state.console}
                     options={{
                       mode: 'javascript',
                       theme: 'material',
                       lineNumbers: true
                     }}
                     onChange={(editor, data, value) => {
-                      this.setState({code:value})
+                      this.setState({console:value})
                     }}
                   />
                 </div>
@@ -65,7 +69,7 @@ export class Compiler extends React.Component{
                     <br/>
                   {this.state.estado?
                         <div className="btn-group btn-group-lg" role="group" aria-label="Basic example">
-                          <button type="button" className="btn btn-outline-secondary">Compilar</button>
+                          <button type="button" className="btn btn-outline-secondary" onClick={()=>this.compilar()}>Compilar</button>
                           <button type="button" className="btn btn-outline-secondary">Optimizar Por Mirilla</button>
                           <button type="button" className="btn btn-outline-secondary">Optimizar Port Bloques</button>
                         </div>:
@@ -81,11 +85,23 @@ export class Compiler extends React.Component{
     }
 
     compilar(){
-      alert('compilando joto')
+      this.setState({estado:false})
+      //console.log(this.state.code)
+      fetch('https://backolc2esavi.herokuapp.com/',{
+                method:'POST',
+                headers: {"Content-Type":"application/json"},
+                body:JSON.stringify({"code":this.state.code})
+              }).then(async response =>{
+                    const json = await response.json() 
+                    //console.log(json)
+                    this.setState({console:json.consola,estado:true
+                    ,simbolos:json.tabla,errores:json.errores})
+                  })
     }
     
     verReportes(){
-        var res = { "username": 2 }
-        history.push(`/reports${res}`)
+        //var data = "dffdd";
+        //var res = { simbolos: this.state.simbolos,errores:this.state.errores }
+        history.push(`/reports${"data"}`)
     }
 }

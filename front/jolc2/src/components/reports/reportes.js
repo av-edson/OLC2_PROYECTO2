@@ -2,27 +2,26 @@ import React from "react";
 import { TablaErrores } from "./TablaErrores";
 import { TablaSimbolos } from "./TablaSimbolos";
 import './stilo.css'
+import history from "../../history";
 
 export class Resports extends React.Component{
 
 
     state={
-        dot:'',
         tabla:{},
         errores:{},
-        mensajeRetorno:'Ninguna accion realizada'
     }
 
     componentDidMount = () => {
         this.getData();
       };
     
-    getData = () => {
+      getData = () => {
         this.setState({dot:'',
         tabla:[],
         errores:[],
         mensajeRetorno:'Ninguna accion realizada'})
-        fetch('https://backapiolc2.herokuapp.com/GetLast',{
+        fetch('https://backolc2esavi.herokuapp.com/GetLast',{
           method:'GET',
           headers: {"Content-Type":"application/json"}
         }).then(async response =>{
@@ -63,8 +62,8 @@ export class Resports extends React.Component{
                   <label className="btn btn-outline-info" htmlFor="btnradio2">Tabla de Simbolos</label>
 
                   <input type="button" className="btn-check" name="btnradio" id="btnradio3" autoComplete="off"
-                  onClick={()=>this.cambio(3)}></input>
-                  <label className="btn btn-outline-info" htmlFor="btnradio3">AST</label>
+                  onClick={()=>this.regresar()}></input>
+                  <label className="btn btn-outline-info" htmlFor="btnradio3">Regresar</label>
                 </div> 
                 
                 <br></br>
@@ -91,11 +90,12 @@ export class Resports extends React.Component{
             case 2:
                 this.setState({tipoReporte:'Tabla de Simbolos'})
                 break;
-            case 3:
-                this.setState({tipoReporte:'AST'})
-                break;
             default:
                 break;
         }
+    }
+
+    regresar(){
+        history.push(`/`)
     }
 }

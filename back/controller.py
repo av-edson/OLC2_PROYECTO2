@@ -64,32 +64,32 @@ def analizarEntrada(contenido=None):
         listJson = objToJson(errores)
         #tablaSimbolos = tablaToJson(gl.listaSimbolos)
         #abr = arbol.getGrafico()
-        return Regreso(True,generador.getCodigo(),listJson,None)
+        return Regreso(True,generador.getCodigo(),listJson,[])
     except Exception as e:
         return Regreso(False,str(e),"","","")
 
-f = open('entrada.txt',encoding="UTF-8")
-gl = Enviroment(None,"Global")
-contenido = f.read()
-ast = compilar(contenido)
-f.close()
-try:
-    genAux = Generator()
-    genAux.limpiarTodo()
-    generador = genAux.getInstance()
-
-    for instruccion in ast:
-        if instruccion != None:
-            d=instruccion.compilar(gl)
-        x = 4
-    #print(generador.getCodigo())
-    f = open('pruebas/salida.go','w',encoding="UTF-8")
-    f.write(generador.getCodigo())
-    f.close()
-    a= errores + generador.listaErrores
-    print(a)
-
-except:
-    print("Error al ejecutar instrucciones")
+#f = open('entrada.txt',encoding="UTF-8")
+#gl = Enviroment(None,"Global")
+#contenido = f.read()
+#ast = compilar(contenido)
+#f.close()
+#try:
+#    genAux = Generator()
+#    genAux.limpiarTodo()
+#    generador = genAux.getInstance()
+#
+#    for instruccion in ast:
+#        if instruccion != None:
+#            d=instruccion.compilar(gl)
+#        x = 4
+#    #print(generador.getCodigo())
+#    f = open('pruebas/salida.go','w',encoding="UTF-8")
+#    f.write(generador.getCodigo())
+#    f.close()
+#    a= errores + generador.listaErrores
+#    print(a)
+#
+#except:
+#    print("Error al ejecutar instrucciones")
 
 

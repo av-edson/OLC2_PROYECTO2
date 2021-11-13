@@ -36,11 +36,11 @@ def obtener():
     global anterior
     if anterior == None:
         ret:Regreso = Regreso(False,"No se ha compilado ninguna entrada para reporte","","")
-        response = flask.jsonify({"value":ret.compilacion,"consola":ret.consola,"errores":ret.errores,"ast":ret.ast,"tabla":ret.tabla})
+        response = flask.jsonify({"value":ret.compilacion,"consola":ret.consola,"errores":ret.errores,"tabla":ret.tabla})
         response.headers.add('Access-Control-Allow-Origin', '*')
         return response
     else:
-        response = flask.jsonify({"value":anterior.compilacion,"consola":anterior.consola,"errores":anterior.errores,"ast":anterior.ast,"tabla":anterior.tabla})
+        response = flask.jsonify({"value":anterior.compilacion,"consola":anterior.consola,"errores":anterior.errores,"tabla":anterior.tabla})
         response.headers.add('Access-Control-Allow-Origin', '*')
         return response
 if __name__ == '__main__':
